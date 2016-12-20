@@ -57,6 +57,7 @@ public class MiniPage {
 	}
 
 	private static String createBodyContent(PageDesignObject obj) throws IOException {
+		//TODO convert PageDesignObject to html
 		String content = Resources.toString(Resources.getResource("templates/flex.html"),
 				Charset.forName(CharEncoding.UTF_8));
 		return content;
@@ -69,8 +70,10 @@ public class MiniPage {
 		try {
 			execlFileStream = new FileInputStream(new File(file));
 			XSSFWorkbook workbook = new XSSFWorkbook(execlFileStream);
-			// object.setSteps(createTestSteps(workbook.getSheetAt(0)));
-			// object.setDatas(createTestDatas(workbook.getSheetAt(1)));
+			//TODO make PageDesignObject
+			//page divide by flex
+			//set flex array
+			//set controls
 		} catch (IOException e) {
 			System.out.println("Can Not Read File:" + e.getMessage());
 			throw e;
