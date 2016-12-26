@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -42,24 +43,35 @@ public class MiniPage {
 	}
 
 	private static String createHtmlFile(PageDesignObject obj) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		String headContent = Resources.toString(Resources.getResource("header.html"),
-				Charset.forName(CharEncoding.UTF_8));
-		sb.append(headContent);
-		String bodyContent = createBodyContent(obj);
-		sb.append(bodyContent);
-		String footContent = Resources.toString(Resources.getResource("footer.html"),
-				Charset.forName(CharEncoding.UTF_8));
-		sb.append(footContent);
-		File file = new File("out/app.html");
-		FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
-		return file.getCanonicalPath();
+		int cntSheet = obj.getWorkbook().getNumberOfSheets();
+		String indexPath = "";
+		for (int index = 0; index < cntSheet; index++) {
+			StringBuilder sb = new StringBuilder();
+			String headContent = Resources.toString(Resources.getResource("header.html"),
+					Charset.forName(CharEncoding.UTF_8));
+			sb.append(headContent);
+			String bodyContent = createBodyContent(obj.getWorkbook().getSheetAt(index));
+			sb.append(bodyContent);
+			String footContent = Resources.toString(Resources.getResource("footer.html"),
+					Charset.forName(CharEncoding.UTF_8));
+			sb.append(footContent);
+			File file = null;
+			if (index == 0) {
+				file = new File("out/index.html");
+			} else {
+				file = new File(String.format("out/%s.html", obj.getWorkbook().getSheetAt(index).getSheetName()));
+			}
+			FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
+			indexPath = file.getCanonicalPath();
+		}
+		return indexPath;
 	}
 
-	private static String createBodyContent(PageDesignObject obj) throws IOException {
-		//TODO convert PageDesignObject to html
-		String content = Resources.toString(Resources.getResource("templates/flex.html"),
+	private static String createBodyContent(XSSFSheet xssfSheet) throws IOException {
+		// TODO convert PageDesignObject to html
+		String content = Resources.toString(Resources.getResource("templates/fulltext.html"),
 				Charset.forName(CharEncoding.UTF_8));
+
 		return content;
 	}
 
@@ -70,10 +82,8 @@ public class MiniPage {
 		try {
 			execlFileStream = new FileInputStream(new File(file));
 			XSSFWorkbook workbook = new XSSFWorkbook(execlFileStream);
-			//TODO make PageDesignObject
-			//page divide by flex
-			//set flex array
-			//set controls
+			object.setWorkbook(workbook);
+			execlFileStream.close();
 		} catch (IOException e) {
 			System.out.println("Can Not Read File:" + e.getMessage());
 			throw e;
