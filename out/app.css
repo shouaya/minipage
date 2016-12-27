@@ -2,8 +2,56 @@
 
 body {
 	font-family: 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', sans-serif;
+	white-space:nowrap;
 }
-
+.BT1{
+	border-top:1px dotted #000000;
+}
+.BT2{
+	border-top:1px dashed #000000;
+}
+.BT3{
+	border-top:1px solid #000000;
+}
+.BT4{
+	border-top:1px double #000000;
+}
+.BB1{
+	border-bottom:1px dotted #000000;
+}
+.BB2{
+	border-bottom:1px dashed #000000;
+}
+.BB3{
+	border-bottom:1px solid #000000;
+}
+.BB4{
+	border-bottom:1px double #000000;
+}
+.BL1{
+	border-left:1px dotted #000000;
+}
+.BL2{
+	border-left:1px dashed #000000;
+}
+.BL3{
+	border-left:1px solid #000000;
+}
+.BL4{
+	border-left:1px double #000000;
+}
+.BR1{
+	border-right:1px dotted #000000;
+}
+.BR2{
+	border-right:1px dashed #000000;
+}
+.BR3{
+	border-right:1px solid #000000;
+}
+.BR4{
+	border-right:1px double #000000;
+}
 .R {
 	position: fixed;
 	height: 26.68px;
@@ -12,6 +60,9 @@ body {
 .C {
 	position: fixed;
 	width: 16.3px;
+}
+.R0 {
+	top: 0px;
 }
 
 .R1 {
@@ -112,6 +163,10 @@ body {
 
 .R25 {
 	top: 667px;
+}
+
+.C0 {
+	left: 0px;
 }
 
 .C1 {

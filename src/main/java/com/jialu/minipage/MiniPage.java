@@ -9,7 +9,9 @@ import java.util.Map;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.WebDriver;
@@ -21,6 +23,7 @@ import com.google.common.io.Resources;
 
 public class MiniPage {
 
+	// TODO 不同device对应的css，增加颜色，线框度，字体，字大小，输入框控件
 	public static void main(String[] args) throws IOException {
 		if (args.length != 3 && args.length != 4) {
 			System.out.println("Parameters Size Error");
@@ -76,7 +79,6 @@ public class MiniPage {
 	}
 
 	private static String createBodyContent(XSSFSheet xssfSheet) throws IOException {
-		System.out.println(xssfSheet.getSheetName());
 		StringBuilder sb = new StringBuilder();
 		int maxRow = 24;
 		int maxCol = 23;
@@ -84,7 +86,6 @@ public class MiniPage {
 			for (int col = 0; col < maxCol; col++) {
 				String cell = converCellToString(xssfSheet.getRow(row).getCell(col));
 				sb.append(cell);
-				System.out.println(cell);
 			}
 		}
 		return sb.toString();
@@ -94,14 +95,64 @@ public class MiniPage {
 		if (cell == null) {
 			return "";
 		}
-		if (cell.getRawValue() == "") {
+		int row = cell.getRowIndex();
+		int col = cell.getColumnIndex();
+		String cssclass = "";
+		XSSFColor bgColor = cell.getCellStyle().getFillForegroundColorColor();
+		if (cell.getCellStyle().getBorderLeftEnum().getCode() > 0) {
+			cssclass += " BL" + getCssBorder(cell.getCellStyle().getBorderLeftEnum());
+		}
+		if (cell.getCellStyle().getBorderRightEnum().getCode() > 0) {
+			cssclass += " BR" + getCssBorder(cell.getCellStyle().getBorderRightEnum());
+		}
+		if (cell.getCellStyle().getBorderTopEnum().getCode() > 0) {
+			cssclass += " BT" + getCssBorder(cell.getCellStyle().getBorderTopEnum());
+		}
+		if (cell.getCellStyle().getBorderBottomEnum().getCode() > 0) {
+			cssclass += " BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum());
+		}
+		if (cell.toString() == "" && cssclass == "" && bgColor == null) {
 			return "";
 		}
-		System.out.println(cell.getCellStyle().getDataFormatString());
-		String stlye = "<div class='R C R%d C%d'>%s</div>";
-		int row = cell.getRowIndex() + 1;
-		int col = cell.getColumnIndex() + 1;
-		return String.format(stlye, row, col, cell.getRawValue());
+		String style = "";
+		if (bgColor != null) {
+			String cssColor = bgColor.getARGBHex().substring(2);
+			style = "<div class='" + cssclass + " R C R%d C%d' style='background-color:#" + cssColor + "'>%s</div>";
+		} else {
+			style = "<div class='" + cssclass + " R C R%d C%d'>%s</div>";
+		}
+		return String.format(style, row, col, cell.getStringCellValue());
+	}
+
+	private static String getCssBorder(BorderStyle borderStyle) {
+		if (borderStyle == BorderStyle.THIN) {
+			return "3";
+		} else if (borderStyle == BorderStyle.MEDIUM) {
+			return "3";
+		} else if (borderStyle == BorderStyle.DASHED) {
+			return "1";
+		} else if (borderStyle == BorderStyle.DOTTED) {
+			return "1";
+		} else if (borderStyle == BorderStyle.THICK) {
+			return "1";
+		} else if (borderStyle == BorderStyle.DOUBLE) {
+			return "4";
+		} else if (borderStyle == BorderStyle.HAIR) {
+			return "1";
+		} else if (borderStyle == BorderStyle.MEDIUM_DASHED) {
+			return "2";
+		} else if (borderStyle == BorderStyle.DASH_DOT) {
+			return "1";
+		} else if (borderStyle == BorderStyle.MEDIUM_DASH_DOT) {
+			return "2";
+		} else if (borderStyle == BorderStyle.DASH_DOT_DOT) {
+			return "1";
+		} else if (borderStyle == BorderStyle.MEDIUM_DASH_DOT_DOT) {
+			return "2";
+		} else if (borderStyle == BorderStyle.SLANTED_DASH_DOT) {
+			return "2";
+		}
+		return "";
 	}
 
 	private static XSSFWorkbook readDesignFile(String file) throws IOException {
