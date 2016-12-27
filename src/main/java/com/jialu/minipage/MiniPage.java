@@ -22,14 +22,34 @@ import com.google.common.io.Resources;
 public class MiniPage {
 
 	public static void main(String[] args) throws IOException {
-		if (args.length != 3) {
+		if (args.length != 3 && args.length != 4) {
 			System.out.println("Parameters Size Error");
 			throw new RuntimeException();
 		}
-		XSSFWorkbook book = readDesignFile(args[0]);
 		System.setProperty("webdriver.chrome.driver", args[1]);
-		String path = createHtmlFile(book);
-		previewHtmlFile(path, args[2]);
+		XSSFWorkbook book = readDesignFile(args[0]);
+		String indexPath = "";
+		if (args.length == 4) {
+			indexPath = createHtmlFile(book.getSheet(args[3]));
+		} else {
+			indexPath = createHtmlFile(book);
+		}
+		previewHtmlFile(indexPath, args[2]);
+	}
+
+	private static String createHtmlFile(XSSFSheet sheet) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		String headContent = Resources.toString(Resources.getResource("header.html"),
+				Charset.forName(CharEncoding.UTF_8));
+		sb.append(headContent);
+		String bodyContent = createBodyContent(sheet);
+		sb.append(bodyContent);
+		String footContent = Resources.toString(Resources.getResource("footer.html"),
+				Charset.forName(CharEncoding.UTF_8));
+		sb.append(footContent);
+		File file = new File(String.format("out/%s.html", sheet.getSheetName()));
+		FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
+		return file.getCanonicalPath();
 	}
 
 	private static void previewHtmlFile(String path, String device) {
@@ -47,23 +67,10 @@ public class MiniPage {
 		int cntSheet = book.getNumberOfSheets();
 		String indexPath = "";
 		for (int index = 0; index < cntSheet; index++) {
-			StringBuilder sb = new StringBuilder();
-			String headContent = Resources.toString(Resources.getResource("header.html"),
-					Charset.forName(CharEncoding.UTF_8));
-			sb.append(headContent);
-			String bodyContent = createBodyContent(book.getSheetAt(index));
-			sb.append(bodyContent);
-			String footContent = Resources.toString(Resources.getResource("footer.html"),
-					Charset.forName(CharEncoding.UTF_8));
-			sb.append(footContent);
-			File file = null;
+			String path = createHtmlFile(book.getSheetAt(index));
 			if (index == 0) {
-				file = new File("out/index.html");
-			} else {
-				file = new File(String.format("out/%s.html", book.getSheetAt(index).getSheetName()));
+				indexPath = path;
 			}
-			FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
-			indexPath = file.getCanonicalPath();
 		}
 		return indexPath;
 	}
@@ -79,19 +86,23 @@ public class MiniPage {
 				sb.append(cell);
 				System.out.println(cell);
 			}
-			sb.append("<br/>");
 		}
 		return sb.toString();
 	}
-	
-	private static String converCellToString(XSSFCell cell){
-		if(cell == null){
-			return "&nbsp;";
-		}
 
-		return cell.getStringCellValue();
+	private static String converCellToString(XSSFCell cell) {
+		if (cell == null) {
+			return "";
+		}
+		if (cell.getRawValue() == "") {
+			return "";
+		}
+		System.out.println(cell.getCellStyle().getDataFormatString());
+		String stlye = "<div class='R C R%d C%d'>%s</div>";
+		int row = cell.getRowIndex() + 1;
+		int col = cell.getColumnIndex() + 1;
+		return String.format(stlye, row, col, cell.getRawValue());
 	}
-	
 
 	private static XSSFWorkbook readDesignFile(String file) throws IOException {
 		FileInputStream execlFileStream = null;

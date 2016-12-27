@@ -1,0 +1,207 @@
+@CHARSET "UTF-8";
+
+body {
+	font-family: 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', sans-serif;
+}
+
+.R {
+	position: fixed;
+	height: 26.68px;
+}
+
+.C {
+	position: fixed;
+	width: 16.3px;
+}
+
+.R1 {
+	top: 26.68px;
+}
+
+.R2 {
+	top: 53.36px;
+}
+
+.R3 {
+	top: 80.04px;
+}
+
+.R4 {
+	top: 106.72px;
+}
+
+.R5 {
+	top: 133.4px;
+}
+
+.R6 {
+	top: 160.08px;
+}
+
+.R7 {
+	top: 186.76px;
+}
+
+.R8 {
+	top: 213.44px;
+}
+
+.R9 {
+	top: 240.12px;
+}
+
+.R10 {
+	top: 266.8px;
+}
+
+.R11 {
+	top: 293.48px;
+}
+
+.R12 {
+	top: 320.16px;
+}
+
+.R13 {
+	top: 346.84px;
+}
+
+.R14 {
+	top: 373.52px;
+}
+
+.R15 {
+	top: 400.2px;
+}
+
+.R16 {
+	top: 426.88px;
+}
+
+.R17 {
+	top: 453.56px;
+}
+
+.R18 {
+	top: 480.24px;
+}
+
+.R19 {
+	top: 506.92px;
+}
+
+.R20 {
+	top: 533.6px;
+}
+
+.R21 {
+	top: 560.28px;
+}
+
+.R22 {
+	top: 586.96px;
+}
+
+.R23 {
+	top: 613.64px;
+}
+
+.R24 {
+	top: 640.32px;
+}
+
+.R25 {
+	top: 667px;
+}
+
+.C1 {
+	left: 16.3px;
+}
+
+.C2 {
+	left: 32.6px;
+}
+
+.C3 {
+	left: 48.9px;
+}
+
+.C4 {
+	left: 65.2px;
+}
+
+.C5 {
+	left: 81.5px;
+}
+
+.C6 {
+	left: 97.8px;
+}
+
+.C7 {
+	left: 114.1px;
+}
+
+.C8 {
+	left: 130.4px;
+}
+
+.C9 {
+	left: 146.7px;
+}
+
+.C10 {
+	left: 163px;
+}
+
+.C11 {
+	left: 179.3px;
+}
+
+.C12 {
+	left: 195.6px;
+}
+
+.C13 {
+	left: 211.9px;
+}
+
+.C14 {
+	left: 228.2px;
+}
+
+.C15 {
+	left: 244.5px;
+}
+
+.C16 {
+	left: 260.8px;
+}
+
+.C17 {
+	left: 277.1px;
+}
+
+.C18 {
+	left: 293.4px;
+}
+
+.C19 {
+	left: 309.7px;
+}
+
+.C20 {
+	left: 326px;
+}
+
+.C21 {
+	left: 342.3px;
+}
+
+.C22 {
+	left: 358.6px;
+}
+
+.C23 {
+	left: 374.9px;
+}
