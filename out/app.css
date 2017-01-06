@@ -3,6 +3,7 @@
 body {
 	font-family: 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', sans-serif;
 	white-space:nowrap;
+	font-size:12px;
 }
 .BT1{
 	border-top:1px dotted #000000;
@@ -53,12 +54,12 @@ body {
 	border-right:1px double #000000;
 }
 .R {
-	position: fixed;
+	position: absolute;
 	height: 26.68px;
 }
 
 .C {
-	position: fixed;
+	position: absolute;
 	width: 16.3px;
 }
 .R0 {

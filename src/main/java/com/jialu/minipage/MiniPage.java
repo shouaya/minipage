@@ -37,7 +37,7 @@ public class MiniPage {
 		} else {
 			indexPath = createHtmlFile(book);
 		}
-		previewHtmlFile(indexPath, args[2]);
+		//previewHtmlFile(indexPath, args[2]);
 	}
 
 	private static String createHtmlFile(XSSFSheet sheet) throws IOException {
@@ -80,7 +80,7 @@ public class MiniPage {
 
 	private static String createBodyContent(XSSFSheet xssfSheet) throws IOException {
 		StringBuilder sb = new StringBuilder();
-		int maxRow = 24;
+		int maxRow = 25;
 		int maxCol = 23;
 		for (int row = 0; row < maxRow; row++) {
 			for (int col = 0; col < maxCol; col++) {
@@ -117,11 +117,18 @@ public class MiniPage {
 		String style = "";
 		if (bgColor != null) {
 			String cssColor = bgColor.getARGBHex().substring(2);
-			style = "<div class='" + cssclass + " R C R%d C%d' style='background-color:#" + cssColor + "'>%s</div>";
+			style = "<div class='" + cssclass + " R C R%d C%d' style='background-color:#" + cssColor + ";opacity: 0.3;'>%s</div>";
 		} else {
 			style = "<div class='" + cssclass + " R C R%d C%d'>%s</div>";
 		}
-		return String.format(style, row, col, cell.getStringCellValue());
+		
+		if(cell.toString() != ""){
+			//TODO 当有背景色时候字体灰蒙蒙的，对策中
+			String div = String.format("<div style='color: #ff0000;'>%s</div>",cell.getStringCellValue());
+			return String.format(style, row, col, div);
+		}
+		
+		return String.format(style, row, col, "");
 	}
 
 	private static String getCssBorder(BorderStyle borderStyle) {
