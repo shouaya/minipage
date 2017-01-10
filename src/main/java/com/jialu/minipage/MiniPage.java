@@ -139,7 +139,7 @@ public class MiniPage {
 			mc.setSize(pt * 3 / 4 + 3);
 			mc.setContent(cell.getStringCellValue());
 		}
-		mc.creatHtml();
+		mc.creatHtml(row, col);
 		return mc;
 	}
 

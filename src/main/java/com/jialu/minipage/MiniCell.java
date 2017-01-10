@@ -43,12 +43,13 @@ public class MiniCell {
 		this.html = html;
 	}
 
-	public void creatHtml() {
-		String html = "<div class=\"%s\" style=\"%s\">%s</div>";
+	public void creatHtml(int r, int c) {
+		String html = "<div class=\"%s\" style=\"%s\"></div>%s";
 		if (content == null) {
 			content = "";
 		} else {
-			content = "<div class=\"I\" style=\"font-size: " + this.size + "px;\">" + content + "</div>";
+			content = "<div class=\"I R" + r + " C" + c + "\" style=\"font-size: " + this.size + "px;\">" + content
+					+ "</div>";
 		}
 		this.html = String.format(html, StringUtils.join(this.classes, " "), StringUtils.join(this.styles, ";"),
 				content);
