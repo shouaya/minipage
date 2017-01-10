@@ -9,6 +9,7 @@ public class MiniCell {
 	private List<String> styles;
 	private String content;
 	private String html;
+	private boolean bold;
 	private int size;
 
 	public List<String> getClasses() {
@@ -48,8 +49,13 @@ public class MiniCell {
 		if (content == null) {
 			content = "";
 		} else {
-			content = "<div class=\"I R" + r + " C" + c + "\" style=\"font-size: " + this.size + "px;\">" + content
-					+ "</div>";
+			if (this.bold) {
+				content = "<div class=\"I" + " IB" + " R" + r + " C" + c + "\" style=\"font-size: " + this.size
+						+ "px;\">" + content + "</div>";
+			} else {
+				content = "<div class=\"I R" + r + " C" + c + "\" style=\"font-size: " + this.size + "px;\">" + content
+						+ "</div>";
+			}
 		}
 		this.html = String.format(html, StringUtils.join(this.classes, " "), StringUtils.join(this.styles, ";"),
 				content);
@@ -61,6 +67,14 @@ public class MiniCell {
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	public boolean getBold() {
+		return bold;
+	}
+
+	public void setBold(boolean bold) {
+		this.bold = bold;
 	}
 
 }

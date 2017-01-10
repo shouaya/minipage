@@ -134,8 +134,8 @@ public class MiniPage {
 			mc.getStyles().add("background-color:#" + cssColor);
 		}
 		if (cell.toString() != "") {
-			// TODO 当有背景色时候字体灰蒙蒙的，对策中
 			int pt = cell.getCellStyle().getFont().getFontHeightInPoints();
+			mc.setBold(cell.getCellStyle().getFont().getBold());
 			mc.setSize(pt * 3 / 4 + 3);
 			mc.setContent(cell.getStringCellValue());
 		}

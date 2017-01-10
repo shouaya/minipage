@@ -12,6 +12,9 @@ body {
 	z-index: 10;
 	width: 170px;
 }
+.IB {
+	font-weight: bold;
+}
 
 .BT1 {
 	border-top: 1px dotted #000000;
