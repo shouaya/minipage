@@ -37,7 +37,7 @@ public class MiniPage {
 		} else {
 			indexPath = createHtmlFile(book);
 		}
-		//previewHtmlFile(indexPath, args[2]);
+		previewHtmlFile(indexPath, args[2]);
 	}
 
 	private static String createHtmlFile(XSSFSheet sheet) throws IOException {
@@ -84,32 +84,39 @@ public class MiniPage {
 		int maxCol = 23;
 		for (int row = 0; row < maxRow; row++) {
 			for (int col = 0; col < maxCol; col++) {
-				String cell = converCellToString(xssfSheet.getRow(row).getCell(col));
+				XSSFCell right = col < maxCol - 1 ? xssfSheet.getRow(row).getCell(col + 1) : null;
+				XSSFCell bottom = row < maxRow - 1 ? xssfSheet.getRow(row + 1).getCell(col) : null;
+				String cell = converCellToString(xssfSheet.getRow(row).getCell(col), right, bottom);
 				sb.append(cell);
 			}
 		}
 		return sb.toString();
 	}
 
-	private static String converCellToString(XSSFCell cell) {
+	private static String converCellToString(XSSFCell cell, XSSFCell right, XSSFCell bottom) {
 		if (cell == null) {
 			return "";
 		}
 		int row = cell.getRowIndex();
 		int col = cell.getColumnIndex();
 		String cssclass = "";
+
 		XSSFColor bgColor = cell.getCellStyle().getFillForegroundColorColor();
 		if (cell.getCellStyle().getBorderLeftEnum().getCode() > 0) {
 			cssclass += " BL" + getCssBorder(cell.getCellStyle().getBorderLeftEnum());
 		}
 		if (cell.getCellStyle().getBorderRightEnum().getCode() > 0) {
-			cssclass += " BR" + getCssBorder(cell.getCellStyle().getBorderRightEnum());
+			if (right == null || right.getCellStyle().getBorderLeftEnum().getCode() <= 0) {
+				cssclass += " BR" + getCssBorder(cell.getCellStyle().getBorderRightEnum());
+			}
 		}
 		if (cell.getCellStyle().getBorderTopEnum().getCode() > 0) {
 			cssclass += " BT" + getCssBorder(cell.getCellStyle().getBorderTopEnum());
 		}
 		if (cell.getCellStyle().getBorderBottomEnum().getCode() > 0) {
-			cssclass += " BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum());
+			if (bottom == null || bottom.getCellStyle().getBorderTopEnum().getCode() <= 0) {
+				cssclass += " BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum());
+			}
 		}
 		if (cell.toString() == "" && cssclass == "" && bgColor == null) {
 			return "";
@@ -117,17 +124,18 @@ public class MiniPage {
 		String style = "";
 		if (bgColor != null) {
 			String cssColor = bgColor.getARGBHex().substring(2);
-			style = "<div class='" + cssclass + " R C R%d C%d' style='background-color:#" + cssColor + ";opacity: 0.3;'>%s</div>";
+			style = "<div class='" + cssclass + " R C R%d C%d' style='background-color:#" + cssColor
+					+ ";opacity: 0.3;'>%s</div>";
 		} else {
 			style = "<div class='" + cssclass + " R C R%d C%d'>%s</div>";
 		}
-		
-		if(cell.toString() != ""){
-			//TODO 当有背景色时候字体灰蒙蒙的，对策中
-			String div = String.format("<div style='color: #ff0000;'>%s</div>",cell.getStringCellValue());
+
+		if (cell.toString() != "") {
+			// TODO 当有背景色时候字体灰蒙蒙的，对策中
+			String div = String.format("<div style='z-index: 2;'>%s</div>", cell.getStringCellValue());
 			return String.format(style, row, col, div);
 		}
-		
+
 		return String.format(style, row, col, "");
 	}
 
