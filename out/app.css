@@ -3,9 +3,11 @@
 body {
 	font-family: 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', sans-serif;
 	white-space: nowrap;
-	font-size: 12px;
+	font-size: 11px;
 }
-
+.I{
+	margin-top: 5px;
+}
 .BT1 {
 	border-top: 1px dotted #000000;
 }
@@ -72,14 +74,12 @@ body {
 
 .R {
 	position: absolute;
-	height: 26.68px;
-	z-index: 1;
+	height: 27px;
 }
 
 .C {
 	position: absolute;
-	width: 16.3px;
-	z-index: 1;
+	width: 17px;
 }
 
 .R0 {
