@@ -12,7 +12,9 @@ import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.WebDriver;
@@ -134,13 +136,36 @@ public class MiniPage {
 			mc.getStyles().add("background-color:#" + cssColor);
 		}
 		if (cell.toString() != "") {
-			int pt = cell.getCellStyle().getFont().getFontHeightInPoints();
-			mc.setBold(cell.getCellStyle().getFont().getBold());
-			mc.setSize(pt * 3 / 4 + 3);
-			mc.setContent(cell.getStringCellValue());
+			mc.setFont(getMiniFont(cell, row, col));
+			try {
+				mc.setContent(cell.getStringCellValue());
+			} catch (Exception ex) {
+				mc.setContent(cell.toString());
+			}
 		}
-		mc.creatHtml(row, col);
+		mc.creatHtml();
 		return mc;
+	}
+
+	private static MiniFont getMiniFont(XSSFCell cell, int row, int col) {
+		MiniFont font = new MiniFont();
+		font.setClasses(new ArrayList<String>());
+		font.setStyles(new ArrayList<String>());
+		font.getClasses().add("I");
+		font.getClasses().add("R" + row);
+		font.getClasses().add("C" + col);
+		if (cell.getCellStyle().getFont().getBold()) {
+			font.getClasses().add("IB");
+		}
+		XSSFCellStyle style = cell.getCellStyle();
+		XSSFFont xssfont = style.getFont();
+		XSSFColor colour = xssfont.getXSSFColor();
+		if (colour != null) {
+			font.getStyles().add("color:#" + colour.getARGBHex().substring(2));
+		}
+		int pt = cell.getCellStyle().getFont().getFontHeightInPoints();
+		font.getStyles().add("font-size: " + (pt * 3 / 4 + 3) + "px");
+		return font;
 	}
 
 	private static String getCssBorder(BorderStyle borderStyle) {

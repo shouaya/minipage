@@ -9,8 +9,7 @@ public class MiniCell {
 	private List<String> styles;
 	private String content;
 	private String html;
-	private boolean bold;
-	private int size;
+	private MiniFont font;
 
 	public List<String> getClasses() {
 		return classes;
@@ -44,37 +43,25 @@ public class MiniCell {
 		this.html = html;
 	}
 
-	public void creatHtml(int r, int c) {
+	public void creatHtml() {
 		String html = "<div class=\"%s\" style=\"%s\"></div>%s";
 		if (content == null) {
 			content = "";
 		} else {
-			if (this.bold) {
-				content = "<div class=\"I" + " IB" + " R" + r + " C" + c + "\" style=\"font-size: " + this.size
-						+ "px;\">" + content + "</div>";
-			} else {
-				content = "<div class=\"I R" + r + " C" + c + "\" style=\"font-size: " + this.size + "px;\">" + content
-						+ "</div>";
-			}
+			content = "<div class=\"%s\" style=\"%s;\">" + content + "</div>";
+			content = String.format(content, StringUtils.join(this.font.getClasses(), " "),
+					StringUtils.join(this.font.getStyles(), ";"), content);
 		}
 		this.html = String.format(html, StringUtils.join(this.classes, " "), StringUtils.join(this.styles, ";"),
 				content);
 	}
 
-	public int getSize() {
-		return size;
+	public MiniFont getFont() {
+		return font;
 	}
 
-	public void setSize(int size) {
-		this.size = size;
-	}
-
-	public boolean getBold() {
-		return bold;
-	}
-
-	public void setBold(boolean bold) {
-		this.bold = bold;
+	public void setFont(MiniFont font) {
+		this.font = font;
 	}
 
 }
