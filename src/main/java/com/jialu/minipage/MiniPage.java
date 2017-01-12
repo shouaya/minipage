@@ -6,14 +6,18 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -26,7 +30,7 @@ import com.google.common.io.Resources;
 
 public class MiniPage {
 
-	// TODO 不同device对应的css
+	// TODO 不同device对应的css、html控件支持
 	public static void main(String[] args) throws IOException {
 		if (args.length != 3 && args.length != 4) {
 			System.out.println("Parameters Size Error");
@@ -40,7 +44,7 @@ public class MiniPage {
 		} else {
 			indexPath = createHtmlFile(book);
 		}
-		previewHtmlFile(indexPath, args[2]);
+		// previewHtmlFile(indexPath, args[2]);
 	}
 
 	private static String createHtmlFile(XSSFSheet sheet) throws IOException {
@@ -96,7 +100,9 @@ public class MiniPage {
 		return sb.toString();
 	}
 
+	@SuppressWarnings("deprecation")
 	private static MiniCell converCell(XSSFCell cell, XSSFCell right, XSSFCell bottom) {
+		//TODO 找到合并的单元格计算宽度长度
 		MiniCell mc = new MiniCell();
 		mc.setHtml("");
 		mc.setClasses(new ArrayList<String>());
@@ -124,7 +130,8 @@ public class MiniPage {
 				mc.getClasses().add(" BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum()));
 			}
 		}
-		if (cell.toString() == "" && mc.getClasses().size() == 0 && bgColor == null) {
+		XSSFComment comment = cell.getCellComment();
+		if (cell.toString() == "" && mc.getClasses().size() == 0 && bgColor == null && comment == null) {
 			return mc;
 		}
 		mc.getClasses().add("R");
@@ -135,13 +142,14 @@ public class MiniPage {
 			String cssColor = bgColor.getARGBHex().substring(2);
 			mc.getStyles().add("background-color:#" + cssColor);
 		}
-		if (cell.toString() != "") {
+		if (comment != null) {
 			mc.setFont(getMiniFont(cell, row, col));
-			try {
-				mc.setContent(cell.getStringCellValue());
-			} catch (Exception ex) {
-				mc.setContent(cell.toString());
-			}
+			RichTextString richString = comment.getString();
+			mc.setContent(richString.getString());
+		}else if (cell.toString() != "") {
+			mc.setFont(getMiniFont(cell, row, col));
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			mc.setContent(cell.getStringCellValue());
 		}
 		mc.creatHtml();
 		return mc;
