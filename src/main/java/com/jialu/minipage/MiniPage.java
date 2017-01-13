@@ -111,7 +111,7 @@ public class MiniPage {
 		if (cell == null) {
 			return mc;
 		}
-		drawCellBorder(mc, cell, right, bottom);
+		drawCellBorder(mc, cell, right, bottom, list);
 
 		XSSFColor bgColor = cell.getCellStyle().getFillForegroundColorColor();
 		if (cell.toString() == "" && mc.getClasses().size() == 0 && bgColor == null) {
@@ -134,10 +134,15 @@ public class MiniPage {
 			String cssColor = bgColor.getARGBHex().substring(2);
 			mc.getStyles().add("background-color:#" + cssColor);
 		}
+
+		if (cell.toString() == "") {
+			mc.creatHtml();
+			return;
+		}
 		mc.setFont(getMiniFont(cell, list));
 		switch (cell.getCellType()) {
 		case HSSFCell.CELL_TYPE_FORMULA:
-			//TODO 添加控件支持
+			// TODO 添加控件支持
 			System.out.println(cell.getCellFormula());
 			break;
 		default:
@@ -146,10 +151,14 @@ public class MiniPage {
 			break;
 		}
 		mc.creatHtml();
-
 	}
 
-	private static void drawCellBorder(MiniCell mc, XSSFCell cell, XSSFCell right, XSSFCell bottom) {
+	private static void drawCellBorder(MiniCell mc, XSSFCell cell, XSSFCell right, XSSFCell bottom,
+			List<CellRangeAddress> list) {
+		if (isInMergedRange(cell, list)) {
+			drawMergedCellBorder(mc, cell, list, right, bottom);
+			return;
+		}
 		if (cell.getCellStyle().getBorderLeftEnum().getCode() > 0) {
 			mc.getClasses().add("BL" + getCssBorder(cell.getCellStyle().getBorderLeftEnum()));
 		}
@@ -163,9 +172,78 @@ public class MiniPage {
 		}
 		if (cell.getCellStyle().getBorderBottomEnum().getCode() > 0) {
 			if (bottom == null || bottom.getCellStyle().getBorderTopEnum().getCode() <= 0) {
-				mc.getClasses().add(" BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum()));
+				mc.getClasses().add("BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum()));
 			}
 		}
+	}
+
+	private static void drawMergedCellBorder(MiniCell mc, XSSFCell cell, List<CellRangeAddress> list, XSSFCell right,
+			XSSFCell bottom) {
+		boolean isLeftCell = isLeftCellInMergedRange(cell, list);
+		if (isLeftCell && cell.getCellStyle().getBorderLeftEnum().getCode() > 0) {
+			mc.getClasses().add("BL" + getCssBorder(cell.getCellStyle().getBorderLeftEnum()));
+		}
+		boolean isBottomCell = isBottomCellInMergedRange(cell, list);
+		if (isBottomCell && cell.getCellStyle().getBorderBottomEnum().getCode() > 0) {
+			if (bottom == null || bottom.getCellStyle().getBorderTopEnum().getCode() <= 0) {
+				mc.getClasses().add("BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum()));
+			}
+		}
+		boolean isTopCell = isTopCellInMergedRange(cell, list);
+		if (isTopCell && cell.getCellStyle().getBorderTopEnum().getCode() > 0) {
+			mc.getClasses().add("BT" + getCssBorder(cell.getCellStyle().getBorderTopEnum()));
+		}
+		boolean isRightCell = isRightCellInMergedRange(cell, list);
+		if (isRightCell && cell.getCellStyle().getBorderRightEnum().getCode() > 0) {
+			if (right == null || right.getCellStyle().getBorderLeftEnum().getCode() <= 0) {
+				mc.getClasses().add("BR" + getCssBorder(cell.getCellStyle().getBorderRightEnum()));
+			}
+		}
+	}
+
+	private static boolean isRightCellInMergedRange(XSSFCell cell, List<CellRangeAddress> list) {
+		for (CellRangeAddress range : list) {
+			if (range.getLastColumn() == cell.getColumnIndex()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isBottomCellInMergedRange(XSSFCell cell, List<CellRangeAddress> list) {
+		for (CellRangeAddress range : list) {
+			if (range.getLastRow() == cell.getRowIndex()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isTopCellInMergedRange(XSSFCell cell, List<CellRangeAddress> list) {
+		for (CellRangeAddress range : list) {
+			if (range.getFirstRow() == cell.getRowIndex()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isLeftCellInMergedRange(XSSFCell cell, List<CellRangeAddress> list) {
+		for (CellRangeAddress range : list) {
+			if (range.getFirstColumn() == cell.getColumnIndex()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isInMergedRange(XSSFCell cell, List<CellRangeAddress> list) {
+		for (CellRangeAddress range : list) {
+			if (range.containsColumn(cell.getColumnIndex()) && range.containsRow(cell.getRowIndex())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static MiniFont getMiniFont(XSSFCell cell, List<CellRangeAddress> list) {
