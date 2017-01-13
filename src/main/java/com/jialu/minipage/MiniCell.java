@@ -1,5 +1,6 @@
 package com.jialu.minipage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,12 @@ public class MiniCell {
 	private String content;
 	private String html;
 	private MiniFont font;
+	
+	public MiniCell(){
+		this.setHtml("");
+		this.setClasses(new ArrayList<String>());
+		this.setStyles(new ArrayList<String>());
+	}
 
 	public List<String> getClasses() {
 		return classes;

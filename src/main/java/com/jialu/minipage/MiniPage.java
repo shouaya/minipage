@@ -11,13 +11,13 @@ import java.util.Map;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -29,6 +29,11 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import com.google.common.io.Resources;
 
 public class MiniPage {
+
+	private static final int MAX_ROW_CNT = 25;
+	private static final int MAX_COL_CNT = 23;
+	private static final double ROW_HEIGHT = 26.68;
+	private static final double COL_WIDTH = 16.3;
 
 	// TODO 不同device对应的css、html控件支持
 	public static void main(String[] args) throws IOException {
@@ -44,7 +49,8 @@ public class MiniPage {
 		} else {
 			indexPath = createHtmlFile(book);
 		}
-		// previewHtmlFile(indexPath, args[2]);
+		System.out.println("HTMLを生成しました。");
+		previewHtmlFile(indexPath, args[2]);
 	}
 
 	private static String createHtmlFile(XSSFSheet sheet) throws IOException {
@@ -87,33 +93,63 @@ public class MiniPage {
 
 	private static String createBodyContent(XSSFSheet xssfSheet) throws IOException {
 		StringBuilder sb = new StringBuilder();
-		int maxRow = 25;
-		int maxCol = 23;
-		for (int row = 0; row < maxRow; row++) {
-			for (int col = 0; col < maxCol; col++) {
-				XSSFCell right = col < maxCol - 1 ? xssfSheet.getRow(row).getCell(col + 1) : null;
-				XSSFCell bottom = row < maxRow - 1 ? xssfSheet.getRow(row + 1).getCell(col) : null;
-				MiniCell cell = converCell(xssfSheet.getRow(row).getCell(col), right, bottom);
+		for (int row = 0; row < MAX_ROW_CNT; row++) {
+			for (int col = 0; col < MAX_COL_CNT; col++) {
+				XSSFCell right = col < MAX_COL_CNT - 1 ? xssfSheet.getRow(row).getCell(col + 1) : null;
+				XSSFCell bottom = row < MAX_ROW_CNT - 1 ? xssfSheet.getRow(row + 1).getCell(col) : null;
+				MiniCell cell = converCell(xssfSheet.getRow(row).getCell(col), right, bottom,
+						xssfSheet.getMergedRegions());
 				sb.append(cell.getHtml());
 			}
 		}
 		return sb.toString();
 	}
 
-	@SuppressWarnings("deprecation")
-	private static MiniCell converCell(XSSFCell cell, XSSFCell right, XSSFCell bottom) {
-		//TODO 找到合并的单元格计算宽度长度
+	private static MiniCell converCell(XSSFCell cell, XSSFCell right, XSSFCell bottom, List<CellRangeAddress> list) {
 		MiniCell mc = new MiniCell();
-		mc.setHtml("");
-		mc.setClasses(new ArrayList<String>());
-		mc.setStyles(new ArrayList<String>());
+
 		if (cell == null) {
 			return mc;
 		}
-		int row = cell.getRowIndex();
-		int col = cell.getColumnIndex();
+		drawCellBorder(mc, cell, right, bottom);
 
 		XSSFColor bgColor = cell.getCellStyle().getFillForegroundColorColor();
+		if (cell.toString() == "" && mc.getClasses().size() == 0 && bgColor == null) {
+			return mc;
+		}
+
+		drawCellContent(mc, cell, list);
+
+		return mc;
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void drawCellContent(MiniCell mc, XSSFCell cell, List<CellRangeAddress> list) {
+		mc.getClasses().add("R");
+		mc.getClasses().add("C");
+		mc.getClasses().add("R" + cell.getRowIndex());
+		mc.getClasses().add("C" + cell.getColumnIndex());
+		XSSFColor bgColor = cell.getCellStyle().getFillForegroundColorColor();
+		if (bgColor != null) {
+			String cssColor = bgColor.getARGBHex().substring(2);
+			mc.getStyles().add("background-color:#" + cssColor);
+		}
+		mc.setFont(getMiniFont(cell, list));
+		switch (cell.getCellType()) {
+		case HSSFCell.CELL_TYPE_FORMULA:
+			//TODO 添加控件支持
+			System.out.println(cell.getCellFormula());
+			break;
+		default:
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			mc.setContent(cell.getStringCellValue());
+			break;
+		}
+		mc.creatHtml();
+
+	}
+
+	private static void drawCellBorder(MiniCell mc, XSSFCell cell, XSSFCell right, XSSFCell bottom) {
 		if (cell.getCellStyle().getBorderLeftEnum().getCode() > 0) {
 			mc.getClasses().add("BL" + getCssBorder(cell.getCellStyle().getBorderLeftEnum()));
 		}
@@ -130,38 +166,15 @@ public class MiniPage {
 				mc.getClasses().add(" BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum()));
 			}
 		}
-		XSSFComment comment = cell.getCellComment();
-		if (cell.toString() == "" && mc.getClasses().size() == 0 && bgColor == null && comment == null) {
-			return mc;
-		}
-		mc.getClasses().add("R");
-		mc.getClasses().add("C");
-		mc.getClasses().add("R" + row);
-		mc.getClasses().add("C" + col);
-		if (bgColor != null) {
-			String cssColor = bgColor.getARGBHex().substring(2);
-			mc.getStyles().add("background-color:#" + cssColor);
-		}
-		if (comment != null) {
-			mc.setFont(getMiniFont(cell, row, col));
-			RichTextString richString = comment.getString();
-			mc.setContent(richString.getString());
-		}else if (cell.toString() != "") {
-			mc.setFont(getMiniFont(cell, row, col));
-			cell.setCellType(Cell.CELL_TYPE_STRING);
-			mc.setContent(cell.getStringCellValue());
-		}
-		mc.creatHtml();
-		return mc;
 	}
 
-	private static MiniFont getMiniFont(XSSFCell cell, int row, int col) {
+	private static MiniFont getMiniFont(XSSFCell cell, List<CellRangeAddress> list) {
 		MiniFont font = new MiniFont();
 		font.setClasses(new ArrayList<String>());
 		font.setStyles(new ArrayList<String>());
 		font.getClasses().add("I");
-		font.getClasses().add("R" + row);
-		font.getClasses().add("C" + col);
+		font.getClasses().add("R" + cell.getRowIndex());
+		font.getClasses().add("C" + cell.getColumnIndex());
 		if (cell.getCellStyle().getFont().getBold()) {
 			font.getClasses().add("IB");
 		}
@@ -173,7 +186,26 @@ public class MiniPage {
 		}
 		int pt = cell.getCellStyle().getFont().getFontHeightInPoints();
 		font.getStyles().add("font-size: " + (pt * 3 / 4 + 3) + "px");
+		CellRangeAddress range = getMergedRange(cell, list);
+		if (range == null) {
+			return font;
+		}
+		font.getClasses().add("TA" + style.getAlignmentEnum().getCode());
+		font.getClasses().add("VA" + style.getVerticalAlignmentEnum().getCode());
+		int width = (int) ((range.getLastColumn() - range.getFirstColumn() + 1) * COL_WIDTH);
+		int height = (int) ((range.getLastRow() - range.getFirstRow() + 1) * ROW_HEIGHT);
+		font.getStyles().add("width: " + width + "px");
+		font.getStyles().add("height: " + height + "px");
 		return font;
+	}
+
+	private static CellRangeAddress getMergedRange(XSSFCell cell, List<CellRangeAddress> list) {
+		for (CellRangeAddress range : list) {
+			if (range.getFirstRow() == cell.getRowIndex() && range.getFirstColumn() == cell.getColumnIndex()) {
+				return range;
+			}
+		}
+		return null;
 	}
 
 	private static String getCssBorder(BorderStyle borderStyle) {
