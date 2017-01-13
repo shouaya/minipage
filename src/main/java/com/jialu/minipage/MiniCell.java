@@ -11,8 +11,8 @@ public class MiniCell {
 	private String content;
 	private String html;
 	private MiniFont font;
-	
-	public MiniCell(){
+
+	public MiniCell() {
 		this.setHtml("");
 		this.setClasses(new ArrayList<String>());
 		this.setStyles(new ArrayList<String>());
@@ -51,16 +51,34 @@ public class MiniCell {
 	}
 
 	public void creatHtml() {
-		String html = "<div class=\"%s\" style=\"%s\"></div>%s";
-		if (content == null) {
-			content = "";
+		if (this.content == null) {
+			this.content = "";
 		} else {
-			content = "<div class=\"%s\" style=\"%s;\">" + content + "</div>";
-			content = String.format(content, StringUtils.join(this.font.getClasses(), " "),
-					StringUtils.join(this.font.getStyles(), ";"), content);
+			if (this.font.getClasses().size() > 0 && this.font.getStyles().size() == 0) {
+				this.content = String.format("<div class=\"%s\">%s</div>",
+						StringUtils.join(this.font.getClasses(), " "), content);
+			} else if (this.font.getClasses().size() == 0 && this.font.getStyles().size() > 0) {
+				this.content = String.format("<div style=\"%s;\">%s</div>",
+						StringUtils.join(this.font.getStyles(), ";"), content);
+			} else if (this.font.getClasses().size() == 0 && this.font.getStyles().size() == 0) {
+				this.content = String.format("<div></div>%s", content);
+			} else {
+				this.content = String.format("<div class=\"%s\" style=\"%s;\">%s</div>",
+						StringUtils.join(this.font.getClasses(), " "), StringUtils.join(this.font.getStyles(), ";"),
+						content);
+			}
 		}
-		this.html = String.format(html, StringUtils.join(this.classes, " "), StringUtils.join(this.styles, ";"),
-				content);
+		if (this.classes.size() > 0 && this.styles.size() == 0) {
+			this.html = String.format("<div class=\"%s\"></div>%s", StringUtils.join(this.classes, " "), content);
+		} else if (this.classes.size() == 0 && this.styles.size() > 0) {
+			this.html = String.format("<div style=\"%s;\"></div>%s", StringUtils.join(this.styles, ";"), content);
+		} else if (this.classes.size() == 0 && this.styles.size() == 0) {
+			this.html = String.format("<div></div>%s", content);
+		} else {
+			this.html = String.format("<div class=\"%s\" style=\"%s;\"></div>%s", StringUtils.join(this.classes, " "),
+					StringUtils.join(this.styles, ";"), content);
+		}
+
 	}
 
 	public MiniFont getFont() {
