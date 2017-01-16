@@ -59,9 +59,9 @@ public class MiniPage {
 		StringBuilder sb = new StringBuilder();
 		String headContent = Resources.toString(Resources.getResource("header.html"),
 				Charset.forName(CharEncoding.UTF_8));
-		sb.append(headContent);
+		sb.append(headContent).append("\r\n");
 		String bodyContent = createBodyContent(sheet);
-		sb.append(bodyContent);
+		sb.append(bodyContent).append("\r\n");;
 		String footContent = Resources.toString(Resources.getResource("footer.html"),
 				Charset.forName(CharEncoding.UTF_8));
 		sb.append(footContent);
