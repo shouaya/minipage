@@ -15,10 +15,12 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.WebDriver;
@@ -142,8 +144,7 @@ public class MiniPage {
 		mc.setFont(getMiniFont(cell, list));
 		switch (cell.getCellType()) {
 		case HSSFCell.CELL_TYPE_FORMULA:
-			// TODO 添加控件支持
-			System.out.println(cell.getCellFormula());
+			mc.setContent(getControlByCell(cell));
 			break;
 		default:
 			cell.setCellType(Cell.CELL_TYPE_STRING);
@@ -151,6 +152,18 @@ public class MiniPage {
 			break;
 		}
 		mc.creatHtml();
+	}
+
+	private static String getControlByCell(XSSFCell cell) {
+		CellReference ref = new CellReference(cell.getCellFormula());
+		XSSFRow row = cell.getSheet().getRow(ref.getRow());
+		String inId = row.getCell(24).toString();
+		String inName = row.getCell(25).toString();
+		String inType = row.getCell(26).toString();
+		String inValue = row.getCell(27).toString();
+		String inClass = row.getCell(28).toString();
+		return String.format("<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\"/>", inId,
+				inName, inType, inValue, inClass);
 	}
 
 	private static void drawCellBorder(MiniCell mc, XSSFCell cell, XSSFCell right, XSSFCell bottom,
