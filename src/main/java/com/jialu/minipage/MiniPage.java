@@ -95,6 +95,11 @@ public class MiniPage {
 
 	private static String createBodyContent(XSSFSheet xssfSheet) throws IOException {
 		StringBuilder sb = new StringBuilder();
+		String action = xssfSheet.getRow(1).getCell(25).toString();
+		String method = xssfSheet.getRow(2).getCell(25).toString();
+		if(action != "" && method != ""){
+			sb.append("<form action='" + action + "' method='" + method + "' >");
+		}
 		for (int row = 0; row < MAX_ROW_CNT; row++) {
 			for (int col = 0; col < MAX_COL_CNT; col++) {
 				XSSFCell right = col < MAX_COL_CNT - 1 ? xssfSheet.getRow(row).getCell(col + 1) : null;
@@ -103,6 +108,9 @@ public class MiniPage {
 						xssfSheet.getMergedRegions());
 				sb.append(cell.getHtml());
 			}
+		}
+		if(action != "" && method != ""){
+			sb.append("</form>");
 		}
 		return sb.toString();
 	}
@@ -162,8 +170,8 @@ public class MiniPage {
 		String inType = row.getCell(26).toString();
 		String inValue = row.getCell(27).toString();
 		String inClass = row.getCell(28).toString();
-		return String.format("<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\"/>", inId,
-				inName, inType, inValue, inClass);
+		return String.format("<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\"/>", inId, inName,
+				inType, inValue, inClass);
 	}
 
 	private static void drawCellBorder(MiniCell mc, XSSFCell cell, XSSFCell right, XSSFCell bottom,
