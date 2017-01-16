@@ -5,6 +5,17 @@ body {
 	white-space: nowrap;
 }
 
+input {
+	height: 27px;
+	line-height: 27px;
+}
+
+input:focus {
+	outline: none !important;
+    border:2px solid #3a4782;
+    box-shadow: 0 0 10px #719ECE;
+}
+
 .R {
 	position: absolute;
 	height: 27px;
@@ -14,6 +25,10 @@ body {
 	position: absolute;
 	width: 17px;
 	z-index: -1;
+}
+
+.W21 {
+	width: 357px;
 }
 
 .TA1 {
