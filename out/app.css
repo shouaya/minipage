@@ -3,17 +3,22 @@
 body {
 	font-family: 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', sans-serif;
 	white-space: nowrap;
+	line-height: 1;
+}
+
+pre {
+	display: inline;
+	line-height: 1;
 }
 
 input {
 	height: 27px;
-	line-height: 27px;
 }
 
 input:focus {
 	outline: none !important;
-    border:2px solid #3a4782;
-    box-shadow: 0 0 10px #719ECE;
+	border: 2px solid #3a4782;
+	box-shadow: 0 0 10px #719ECE;
 }
 
 .R {
@@ -146,7 +151,7 @@ input:focus {
 }
 
 .R0 {
-	top: 1px;
+	top: 0.1px;
 }
 
 .R1 {
@@ -246,7 +251,7 @@ input:focus {
 }
 
 .C0 {
-	left: 1px;
+	left: 0.1px;
 }
 
 .C1 {
