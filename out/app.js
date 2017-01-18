@@ -36,7 +36,6 @@ app.factory('Profile', ['$resource', function($resource) {
 //
 app.controller('MiniController', ['$rootScope', '$scope', 'Profile',
   function($rootScope, $scope, Profile) {
-	alert("what");
 	Profile.get({id:1}).$promise.then(function(user) {
 		$scope.user = user;
 	}).catch(function(data, status) {
