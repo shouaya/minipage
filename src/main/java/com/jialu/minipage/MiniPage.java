@@ -5,10 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -23,12 +20,6 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
-import com.google.common.io.Resources;
 
 public class MiniPage {
 
@@ -39,46 +30,27 @@ public class MiniPage {
 
 	// TODO 不同device对应的css、html控件支持
 	public static void main(String[] args) throws IOException {
-		if (args.length != 3 && args.length != 4) {
+		if (args.length != 1 && args.length != 2) {
 			System.out.println("Parameters Size Error");
 			throw new RuntimeException();
 		}
 		System.setProperty("webdriver.chrome.driver", args[1]);
 		XSSFWorkbook book = readDesignFile(args[0]);
-		String indexPath = "";
-		if (args.length == 4) {
-			indexPath = createHtmlFile(book.getSheet(args[3]));
+		if (args.length == 2) {
+			createHtmlFile(book.getSheet(args[1]));
 		} else {
-			indexPath = createHtmlFile(book);
+			createHtmlFile(book);
 		}
 		System.out.println("HTMLを生成しました。");
-		previewHtmlFile(indexPath, args[2]);
 	}
 
 	private static String createHtmlFile(XSSFSheet sheet) throws IOException {
 		StringBuilder sb = new StringBuilder();
-		String headContent = Resources.toString(Resources.getResource("header.html"),
-				Charset.forName(CharEncoding.UTF_8));
-		sb.append(headContent).append("\r\n");
 		String bodyContent = createBodyContent(sheet);
 		sb.append(bodyContent).append("\r\n");;
-		String footContent = Resources.toString(Resources.getResource("footer.html"),
-				Charset.forName(CharEncoding.UTF_8));
-		sb.append(footContent);
 		File file = new File(String.format("out/%s.html", sheet.getSheetName()));
 		FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
 		return file.getCanonicalPath();
-	}
-
-	private static void previewHtmlFile(String path, String device) {
-		Map<String, String> mobileEmulation = new HashMap<String, String>();
-		mobileEmulation.put("deviceName", device);
-		Map<String, Object> chromeOptions = new HashMap<String, Object>();
-		chromeOptions.put("mobileEmulation", mobileEmulation);
-		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-		capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
-		WebDriver driver = new ChromeDriver(capabilities);
-		driver.get(path);
 	}
 
 	private static String createHtmlFile(XSSFWorkbook book) throws IOException {
@@ -95,11 +67,6 @@ public class MiniPage {
 
 	private static String createBodyContent(XSSFSheet xssfSheet) throws IOException {
 		StringBuilder sb = new StringBuilder();
-		String action = xssfSheet.getRow(1).getCell(25).toString();
-		String method = xssfSheet.getRow(2).getCell(25).toString();
-		if(action != "" && method != ""){
-			sb.append("<form action='" + action + "' method='" + method + "' >");
-		}
 		for (int row = 0; row < MAX_ROW_CNT; row++) {
 			for (int col = 0; col < MAX_COL_CNT; col++) {
 				XSSFCell right = col < MAX_COL_CNT - 1 ? xssfSheet.getRow(row).getCell(col + 1) : null;
@@ -108,9 +75,6 @@ public class MiniPage {
 						xssfSheet.getMergedRegions());
 				sb.append(cell.getHtml());
 			}
-		}
-		if(action != "" && method != ""){
-			sb.append("</form>");
 		}
 		return sb.toString();
 	}
