@@ -55,15 +55,15 @@ public class MiniCell {
 			this.content = "";
 		} else {
 			if (this.font.getClasses().size() > 0 && this.font.getStyles().size() == 0) {
-				this.content = String.format("<div class=\"%s\"><pre>%s</pre></div>",
+				this.content = String.format("<div class=\"%s\">%s</div>",
 						StringUtils.join(this.font.getClasses(), " "), content);
 			} else if (this.font.getClasses().size() == 0 && this.font.getStyles().size() > 0) {
-				this.content = String.format("<div style=\"%s;\"><pre>%s</pre></div>",
+				this.content = String.format("<div style=\"%s;\">%s</div>",
 						StringUtils.join(this.font.getStyles(), ";"), content);
 			} else if (this.font.getClasses().size() == 0 && this.font.getStyles().size() == 0) {
 				this.content = String.format("<div><pre>%s</pre></div>", content);
 			} else {
-				this.content = String.format("<div class=\"%s\" style=\"%s;\"><pre>%s</pre></div>",
+				this.content = String.format("<div class=\"%s\" style=\"%s;\">%s</div>",
 						StringUtils.join(this.font.getClasses(), " "), StringUtils.join(this.font.getStyles(), ";"),
 						content);
 			}

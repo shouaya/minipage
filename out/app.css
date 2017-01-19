@@ -32,8 +32,96 @@ input:focus {
 	z-index: -1;
 }
 
+.W1 {
+	width: 17px;
+}
+
+.W2 {
+	width: 34px;
+}
+
+.W3 {
+	width: 51px;
+}
+
+.W4 {
+	width: 68px;
+}
+
+.W5 {
+	width: 85px;
+}
+
+.W6 {
+	width: 102px;
+}
+
+.W7 {
+	width: 119px;
+}
+
+.W8 {
+	width: 136px;
+}
+
+.W9 {
+	width: 153px;
+}
+
+.W10 {
+	width: 170px;
+}
+
+.W11 {
+	width: 187px;
+}
+
+.W12 {
+	width: 204px;
+}
+
+.W13 {
+	width: 221px;
+}
+
+.W14 {
+	width: 238px;
+}
+
+.W15 {
+	width: 255px;
+}
+
+.W16 {
+	width: 272px;
+}
+
+.W17 {
+	width: 289px;
+}
+
+.W18 {
+	width: 306px;
+}
+
+.W19 {
+	width: 323px;
+}
+
+.W20 {
+	width: 340px;
+}
+
 .W21 {
 	width: 357px;
+}
+
+.W22 {
+	width: 374px;
+}
+
+.W23 {
+	width: 391px;
 }
 
 .TA1 {
@@ -99,7 +187,7 @@ input:focus {
 }
 
 .BT4 {
-	border-top: 1px double #5F6F7E;
+	border-top: 3px double #5F6F7E;
 }
 
 .BB1 {
@@ -115,7 +203,7 @@ input:focus {
 }
 
 .BB4 {
-	border-bottom: 1px double #5F6F7E;
+	border-bottom: 3px double #5F6F7E;
 }
 
 .BL1 {
@@ -131,7 +219,7 @@ input:focus {
 }
 
 .BL4 {
-	border-left: 1px double #5F6F7E;
+	border-left: 3px double #5F6F7E;
 }
 
 .BR1 {
@@ -147,7 +235,7 @@ input:focus {
 }
 
 .BR4 {
-	border-right: 1px double #5F6F7E;
+	border-right: 3px double #5F6F7E;
 }
 
 .R0 {

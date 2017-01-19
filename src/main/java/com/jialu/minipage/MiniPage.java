@@ -20,6 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import com.google.common.io.Resources;
 
 public class MiniPage {
 
@@ -47,7 +48,7 @@ public class MiniPage {
 	private static String createHtmlFile(XSSFSheet sheet) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		String bodyContent = createBodyContent(sheet);
-		sb.append(bodyContent).append("\r\n");;
+		sb.append(bodyContent).append("\r\n");
 		File file = new File(String.format("out/%s.html", sheet.getSheetName()));
 		FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
 		return file.getCanonicalPath();
@@ -67,15 +68,22 @@ public class MiniPage {
 
 	private static String createBodyContent(XSSFSheet xssfSheet) throws IOException {
 		StringBuilder sb = new StringBuilder();
+		sb.append("<").append(xssfSheet.getSheetName()).append(">\r\n");
 		for (int row = 0; row < MAX_ROW_CNT; row++) {
 			for (int col = 0; col < MAX_COL_CNT; col++) {
 				XSSFCell right = col < MAX_COL_CNT - 1 ? xssfSheet.getRow(row).getCell(col + 1) : null;
 				XSSFCell bottom = row < MAX_ROW_CNT - 1 ? xssfSheet.getRow(row + 1).getCell(col) : null;
 				MiniCell cell = converCell(xssfSheet.getRow(row).getCell(col), right, bottom,
 						xssfSheet.getMergedRegions());
-				sb.append(cell.getHtml());
+				String html = cell.getHtml();
+				sb.append(html);
+				if(html.length()>0)sb.append("\r\n");
 			}
 		}
+		String script = Resources.toString(Resources.getResource("javascript/" + xssfSheet.getSheetName() + ".js"),
+				Charset.forName(CharEncoding.UTF_8));
+		sb.append("\r\n<script>\r\n").append(script).append("\r\n</script>\r\n");
+		sb.append("</").append(xssfSheet.getSheetName()).append(">");
 		return sb.toString();
 	}
 
@@ -120,7 +128,7 @@ public class MiniPage {
 			break;
 		default:
 			cell.setCellType(Cell.CELL_TYPE_STRING);
-			mc.setContent(cell.getStringCellValue());
+			mc.setContent("<pre>" + cell.getStringCellValue() + "</pre>");
 			break;
 		}
 		mc.creatHtml();
@@ -134,8 +142,9 @@ public class MiniPage {
 		String inType = row.getCell(26).toString();
 		String inValue = row.getCell(27).toString();
 		String inClass = row.getCell(28).toString();
-		return String.format("<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\"/>", inId, inName,
-				inType, inValue, inClass);
+		String inClick = row.getCell(29).toString();
+		return String.format("<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\" onclick={%s}/>",
+				inId, inName, inType, inValue, inClass, inClick);
 	}
 
 	private static void drawCellBorder(MiniCell mc, XSSFCell cell, XSSFCell right, XSSFCell bottom,
