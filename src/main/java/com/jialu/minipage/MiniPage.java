@@ -191,6 +191,10 @@ public class MiniPage {
 		String inValue = row.getCell(27).toString();
 		String inClass = row.getCell(28).toString();
 		String inClick = row.getCell(29).toString();
+		if(inType.equals("var")){
+			return String.format(inValue);
+		}
+		
 		return String.format("<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\" onclick={%s}/>",
 				inId, inName, inType, inValue, inClass, inClick);
 	}
@@ -363,6 +367,12 @@ public class MiniPage {
 		return inner;
 	}
 
+	/**
+	 * @param cell
+	 * @param colour
+	 * @param list
+	 * @return
+	 */
 	private static String getARGBHexByComment(XSSFCell cell, XSSFColor colour, List<CellRangeAddress> list) {
 		String argb = "";
 		XSSFCell firstCell = cell;
@@ -396,6 +406,12 @@ public class MiniPage {
 		return argb;
 	}
 
+	/**
+	 * @param cell
+	 * @param colour
+	 * @param list
+	 * @return
+	 */
 	private static String getBgARGBHex(XSSFCell cell, XSSFColor colour, List<CellRangeAddress> list) {
 		String argb = getARGBHexByComment(cell, colour, list);
 		return argb.split(";")[0];
