@@ -3,6 +3,7 @@ package com.jialu.minipage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,10 @@ import com.google.common.io.Resources;
 
 public class MiniPage {
 
-	private static final int MAX_ROW_CNT = 25;
-	private static final int MAX_COL_CNT = 23;
-	private static final double ROW_HEIGHT = 26.68;
-	private static final double COL_WIDTH = 16.3;
+	private static final int MAX_ROW_CNT = 35;
+	private static final int MAX_COL_CNT = 20;
+	private static final double ROW_HEIGHT = 1;
+	private static final double COL_WIDTH = 1;
 
 	// TODO 不同device对应的css、html控件支持
 	public static void main(String[] args) throws IOException {
@@ -35,7 +36,6 @@ public class MiniPage {
 			System.out.println("Parameters Size Error");
 			throw new RuntimeException();
 		}
-		System.setProperty("webdriver.chrome.driver", args[1]);
 		XSSFWorkbook book = readDesignFile(args[0]);
 		if (args.length == 2) {
 			createHtmlFile(book.getSheet(args[1]));
@@ -58,7 +58,11 @@ public class MiniPage {
 		int cntSheet = book.getNumberOfSheets();
 		String indexPath = "";
 		for (int index = 0; index < cntSheet; index++) {
-			String path = createHtmlFile(book.getSheetAt(index));
+			XSSFSheet sheet = book.getSheetAt(index);
+			if(sheet.getSheetName().startsWith("_")){
+				continue;
+			}
+			String path = createHtmlFile(sheet);
 			if (index == 0) {
 				indexPath = path;
 			}
@@ -77,12 +81,17 @@ public class MiniPage {
 						xssfSheet.getMergedRegions());
 				String html = cell.getHtml();
 				sb.append(html);
-				if(html.length()>0)sb.append("\r\n");
+				if (html.length() > 0)
+					sb.append("\r\n");
 			}
 		}
-		String script = Resources.toString(Resources.getResource("javascript/" + xssfSheet.getSheetName() + ".js"),
-				Charset.forName(CharEncoding.UTF_8));
-		sb.append("\r\n<script>\r\n").append(script).append("\r\n</script>\r\n");
+		String scriptPath = "javascript/" + xssfSheet.getSheetName() + ".js";
+		URL p = MiniPage.class.getClassLoader().getResource(scriptPath);
+		if (p != null) {
+			String script = Resources.toString(Resources.getResource(scriptPath), Charset.forName(CharEncoding.UTF_8));
+			sb.append("\r\n<script>\r\n").append(script).append("\r\n</script>\r\n");
+		}
+
 		sb.append("</").append(xssfSheet.getSheetName()).append(">");
 		return sb.toString();
 	}
@@ -266,8 +275,8 @@ public class MiniPage {
 		font.getClasses().add("VA" + style.getVerticalAlignmentEnum().getCode());
 		int width = (int) ((range.getLastColumn() - range.getFirstColumn() + 1) * COL_WIDTH);
 		int height = (int) ((range.getLastRow() - range.getFirstRow() + 1) * ROW_HEIGHT);
-		font.getStyles().add("width: " + width + "px");
-		font.getStyles().add("height: " + height + "px");
+		font.getStyles().add("width: " + width + "rem");
+		font.getStyles().add("height: " + height + "rem");
 		return font;
 	}
 

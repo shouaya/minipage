@@ -6,17 +6,27 @@
   <title>{{page.page_title}}</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
   <meta name="apple-mobile-web-app-status-bar-style" content="yes" />
   <link rel="shortcut icon" href="https://api.9jialu.com/app/favicon.ico" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weui/1.1.0/style/weui.min.css">
-  <link rel="stylesheet" href="app.css?v=1">
+  <link rel="stylesheet" href="weui.css?v=5">
+  <link rel="stylesheet" href="app.css?v=5">
+  <script type="text/javascript">
+        var cssEl = document.createElement('style');
+        document.documentElement.firstElementChild.appendChild(cssEl);
+        function setPxPerRem(){
+            var dpr = 1;
+            var pxPerRem = document.documentElement.clientWidth * dpr / 20;
+            cssEl.innerHTML = 'html{font-size:' + pxPerRem + 'px!important;}';
+        }
+        setPxPerRem();
+  </script>
 </head>
 <body>
 <home></home>
 <profile></profile>
-  <script src="profile.html?v=3" type="riot/tag"></script>
-  <script src="home.html?v=3" type="riot/tag"></script>
+  <script src="profile.html?v=5" type="riot/tag"></script>
+  <script src="home.html?v=5" type="riot/tag"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.0.7/riot+compiler.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.js"></script>
   <script>

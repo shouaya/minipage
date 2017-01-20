@@ -3,16 +3,16 @@
 body {
 	font-family: 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', sans-serif;
 	white-space: nowrap;
-	line-height: 1;
+	line-height: 1rem;
 }
 
 pre {
 	display: inline;
-	line-height: 1;
+	line-height: 1rem;
 }
 
 input {
-	height: 27px;
+	height: 1rem;
 }
 
 input:focus {
@@ -22,106 +22,106 @@ input:focus {
 }
 
 .R {
-	position: absolute;
-	height: 27px;
+	position: fixed;
+	height: 1rem;
 }
 
 .C {
-	position: absolute;
-	width: 17px;
+	position: fixed;
+	width: 1rem;
 	z-index: -1;
 }
 
 .W1 {
-	width: 17px;
+	width: 1rem;
 }
 
 .W2 {
-	width: 34px;
+	width: 2rem;
 }
 
 .W3 {
-	width: 51px;
+	width: 3rem;
 }
 
 .W4 {
-	width: 68px;
+	width: 4rem;
 }
 
 .W5 {
-	width: 85px;
+	width: 5rem;
 }
 
 .W6 {
-	width: 102px;
+	width: 6rem;
 }
 
 .W7 {
-	width: 119px;
+	width: 7rem;
 }
 
 .W8 {
-	width: 136px;
+	width: 8rem;
 }
 
 .W9 {
-	width: 153px;
+	width: 9rem;
 }
 
 .W10 {
-	width: 170px;
+	width: 10rem;
 }
 
 .W11 {
-	width: 187px;
+	width: 11rem;
 }
 
 .W12 {
-	width: 204px;
+	width: 12rem;
 }
 
 .W13 {
-	width: 221px;
+	width: 13rem;
 }
 
 .W14 {
-	width: 238px;
+	width: 14rem;
 }
 
 .W15 {
-	width: 255px;
+	width: 15rem;
 }
 
 .W16 {
-	width: 272px;
+	width: 16rem;
 }
 
 .W17 {
-	width: 289px;
+	width: 17rem;
 }
 
 .W18 {
-	width: 306px;
+	width: 18rem;
 }
 
 .W19 {
-	width: 323px;
+	width: 19rem;
 }
 
 .W20 {
-	width: 340px;
+	width: 20rem;
 }
 
 .W21 {
-	width: 357px;
+	width: 21rem;
 }
 
 .W22 {
-	width: 374px;
+	width: 22rem;
 }
 
 .W23 {
-	width: 391px;
+	width: 23rem;
 }
 
 .TA1 {
@@ -239,193 +239,237 @@ input:focus {
 }
 
 .R0 {
-	top: 0.1px;
+	top: 0rem;
 }
 
 .R1 {
-	top: 26.68px;
+	top: 1rem;
 }
 
 .R2 {
-	top: 53.36px;
+	top: 2rem;
 }
 
 .R3 {
-	top: 80.04px;
+	top: 3rem;
 }
 
 .R4 {
-	top: 106.72px;
+	top: 4rem;
 }
 
 .R5 {
-	top: 133.4px;
+	top: 5rem;
 }
 
 .R6 {
-	top: 160.08px;
+	top: 6rem;
 }
 
 .R7 {
-	top: 186.76px;
+	top: 7rem;
 }
 
 .R8 {
-	top: 213.44px;
+	top: 8rem;
 }
 
 .R9 {
-	top: 240.12px;
+	top: 9rem;
 }
 
 .R10 {
-	top: 266.8px;
+	top: 10rem;
 }
 
 .R11 {
-	top: 293.48px;
+	top: 11rem;
 }
 
 .R12 {
-	top: 320.16px;
+	top: 12rem;
 }
 
 .R13 {
-	top: 346.84px;
+	top: 13rem;
 }
 
 .R14 {
-	top: 373.52px;
+	top: 14rem;
 }
 
 .R15 {
-	top: 400.2px;
+	top: 15rem;
 }
 
 .R16 {
-	top: 426.88px;
+	top: 16rem;
 }
 
 .R17 {
-	top: 453.56px;
+	top: 17rem;
 }
 
 .R18 {
-	top: 480.24px;
+	top: 18rem;
 }
 
 .R19 {
-	top: 506.92px;
+	top: 19rem;
 }
 
 .R20 {
-	top: 533.6px;
+	top: 20rem;
 }
 
 .R21 {
-	top: 560.28px;
+	top: 21rem;
 }
 
 .R22 {
-	top: 586.96px;
+	top: 22rem;
 }
 
 .R23 {
-	top: 613.64px;
+	top: 23rem;
 }
 
 .R24 {
-	top: 639px;
+	top: 24rem;
 }
-
+.R25 {
+	top: 25rem;
+}
+.R26 {
+	top: 26rem;
+}
+.R27 {
+	top: 27rem;
+}
+.R28 {
+	top: 28rem;
+}
+.R29 {
+	top: 29rem;
+}
+.R30 {
+	top: 30rem;
+}
+.R31 {
+	top: 31rem;
+}
+.R32 {
+	top: 32rem;
+}
+.R33 {
+	top: 33rem;
+}
+.R34 {
+	top: 34rem;
+}
+.R35 {
+	top: 35rem;
+}
+.R36 {
+	top: 36rem;
+}
+.R37 {
+	top: 37rem;
+}
+.R38 {
+	top: 38rem;
+}
+.R39 {
+	top: 39rem;
+}
 .C0 {
-	left: 0.1px;
+	left: 0rem;
 }
 
 .C1 {
-	left: 16.3px;
+	left: 1rem;
 }
 
 .C2 {
-	left: 32.6px;
+	left: 2rem;
 }
 
 .C3 {
-	left: 48.9px;
+	left: 3rem;
 }
 
 .C4 {
-	left: 65.2px;
+	left: 4rem;
 }
 
 .C5 {
-	left: 81.5px;
+	left: 5rem;
 }
 
 .C6 {
-	left: 97.8px;
+	left: 6rem;
 }
 
 .C7 {
-	left: 114.1px;
+	left: 7rem;
 }
 
 .C8 {
-	left: 130.4px;
+	left: 8rem;
 }
 
 .C9 {
-	left: 146.7px;
+	left: 9rem;
 }
 
 .C10 {
-	left: 163px;
+	left: 10rem;
 }
 
 .C11 {
-	left: 179.3px;
+	left: 11rem;
 }
 
 .C12 {
-	left: 195.6px;
+	left: 12rem;
 }
 
 .C13 {
-	left: 211.9px;
+	left: 13rem;
 }
 
 .C14 {
-	left: 228.2px;
+	left: 14rem;
 }
 
 .C15 {
-	left: 244.5px;
+	left: 15rem;
 }
 
 .C16 {
-	left: 260.8px;
+	left: 16rem;
 }
 
 .C17 {
-	left: 277.1px;
+	left: 17rem;
 }
 
 .C18 {
-	left: 293.4px;
+	left: 18rem;
 }
 
 .C19 {
-	left: 309.7px;
+	left: 19rem;
 }
 
 .C20 {
-	left: 326px;
+	left: 20rem;
 }
 
 .C21 {
-	left: 342.3px;
+	left: 21rem;
 }
 
 .C22 {
-	left: 357px;
+	left: 22rem;
 }
