@@ -5,12 +5,16 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * @author EB060
+ *
+ */
 public class MiniCell {
 	private List<String> classes;
 	private List<String> styles;
 	private String content;
 	private String html;
-	private MiniFont font;
+	private MiniInner inner;
 
 	public MiniCell() {
 		this.setHtml("");
@@ -54,17 +58,17 @@ public class MiniCell {
 		if (this.content == null) {
 			this.content = "";
 		} else {
-			if (this.font.getClasses().size() > 0 && this.font.getStyles().size() == 0) {
+			if (this.inner.getClasses().size() > 0 && this.inner.getStyles().size() == 0) {
 				this.content = String.format("<div class=\"%s\">%s</div>",
-						StringUtils.join(this.font.getClasses(), " "), content);
-			} else if (this.font.getClasses().size() == 0 && this.font.getStyles().size() > 0) {
+						StringUtils.join(this.inner.getClasses(), " "), content);
+			} else if (this.inner.getClasses().size() == 0 && this.inner.getStyles().size() > 0) {
 				this.content = String.format("<div style=\"%s;\">%s</div>",
-						StringUtils.join(this.font.getStyles(), ";"), content);
-			} else if (this.font.getClasses().size() == 0 && this.font.getStyles().size() == 0) {
+						StringUtils.join(this.inner.getStyles(), ";"), content);
+			} else if (this.inner.getClasses().size() == 0 && this.inner.getStyles().size() == 0) {
 				this.content = String.format("<div><pre>%s</pre></div>", content);
 			} else {
 				this.content = String.format("<div class=\"%s\" style=\"%s;\">%s</div>",
-						StringUtils.join(this.font.getClasses(), " "), StringUtils.join(this.font.getStyles(), ";"),
+						StringUtils.join(this.inner.getClasses(), " "), StringUtils.join(this.inner.getStyles(), ";"),
 						content);
 			}
 		}
@@ -81,12 +85,12 @@ public class MiniCell {
 
 	}
 
-	public MiniFont getFont() {
-		return font;
+	public MiniInner getInner() {
+		return inner;
 	}
 
-	public void setFont(MiniFont font) {
-		this.font = font;
+	public void setInner(MiniInner font) {
+		this.inner = font;
 	}
 
 }

@@ -2,7 +2,11 @@ package com.jialu.minipage;
 
 import java.util.List;
 
-public class MiniFont {
+/**
+ * @author EB060
+ *
+ */
+public class MiniInner {
 	private List<String> classes;
 	private List<String> styles;
 
