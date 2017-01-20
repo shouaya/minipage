@@ -22,12 +22,12 @@ input:focus {
 }
 
 .R {
-	position: fixed;
+	position: absolute;
 	height: 1rem;
 }
 
 .C {
-	position: fixed;
+	position: absolute;
 	width: 1rem;
 	z-index: -1;
 }

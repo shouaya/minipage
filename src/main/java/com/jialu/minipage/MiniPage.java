@@ -30,7 +30,6 @@ public class MiniPage {
 	private static final double ROW_HEIGHT = 1;
 	private static final double COL_WIDTH = 1;
 
-	// TODO 不同device对应的css、html控件支持
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1 && args.length != 2) {
 			System.out.println("Parameters Size Error");
