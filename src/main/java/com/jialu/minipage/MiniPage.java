@@ -37,6 +37,10 @@ public class MiniPage {
 	private static final double COL_WIDTH = 1;
 
 	/**
+	 * ->项目＞程序员＞营业员 1，line公式号限定 2，Github主要获取程序员项目和邮箱，->绑定后成为程序员
+	 * 3，linkedin主要获取程序员和营业员履历和头衔->绑定后成为营业员 4，程序员可对项目感兴趣，可以对营业感兴趣，可以对项目评价
+	 * 5，营业员可以登陆项目，可以对程序感兴趣， 6，项目可以查找，按地图，营业，程序，热度等
+	 * 
 	 * @param args
 	 * @throws IOException
 	 */
@@ -191,10 +195,18 @@ public class MiniPage {
 		String inValue = row.getCell(27).toString();
 		String inClass = row.getCell(28).toString();
 		String inClick = row.getCell(29).toString();
-		if(inType.equals("var")){
-			return String.format(inValue);
+		String inMode = row.getCell(30).toString();
+		if(inType.equals("label")){
+			return inValue;
 		}
-		
+		if (inMode != "") {
+			String control = "<div hide={ mode=='" + inMode + "' }>" + inValue + "</div>" + "<div show={ mode=='"
+					+ inMode + "' }>%s</div>";
+			return String.format(control,
+					String.format(
+							"<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\" onclick={%s}/>",
+							inId, inName, inType, inValue, inClass, inClick));
+		}
 		return String.format("<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\" onclick={%s}/>",
 				inId, inName, inType, inValue, inClass, inClick);
 	}
