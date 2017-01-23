@@ -37,9 +37,6 @@ public class MiniPage {
 	private static final double COL_WIDTH = 1;
 
 	/**
-	 * ->项目＞程序员＞营业员 1，line公式号限定 2，Github主要获取程序员项目和邮箱，->绑定后成为程序员
-	 * 3，linkedin主要获取程序员和营业员履历和头衔->绑定后成为营业员 4，程序员可对项目感兴趣，可以对营业感兴趣，可以对项目评价
-	 * 5，营业员可以登陆项目，可以对程序感兴趣， 6，项目可以查找，按地图，营业，程序，热度等
 	 * 
 	 * @param args
 	 * @throws IOException
