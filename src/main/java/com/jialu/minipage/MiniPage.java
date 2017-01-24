@@ -54,19 +54,29 @@ public class MiniPage {
 		createHtmlFile(book);
 		System.out.println("HTMLを生成しました。");
 	}
-
+	
 	/**
-	 * @param sheet
+	 * @param file
 	 * @return
 	 * @throws IOException
 	 */
-	private static MiniBody createHtmlFile(XSSFSheet sheet) throws IOException {
-		MiniBody body = createBodyContent(sheet);
-		File file = new File(String.format("out/%s.html", sheet.getSheetName()));
-		FileUtils.writeStringToFile(file, body.getHtml(), Charset.forName(CharEncoding.UTF_8));
-		return body;
-	}
+	private static XSSFWorkbook readDesignFile(String file) throws IOException {
+		FileInputStream execlFileStream = null;
+		XSSFWorkbook book = null;
 
+		try {
+			execlFileStream = new FileInputStream(new File(file));
+			book = new XSSFWorkbook(execlFileStream);
+			execlFileStream.close();
+		} catch (IOException e) {
+			System.out.println("Can Not Read File:" + e.getMessage());
+			throw e;
+		} finally {
+			execlFileStream.close();
+		}
+		return book;
+	}
+	
 	/**
 	 * @param book
 	 * @return
@@ -87,7 +97,7 @@ public class MiniPage {
 		createCssFile(book.getSheet("_css"), needAddCss);
 		return indexPath;
 	}
-
+	
 	/**
 	 * @param sheet
 	 * @param needAddCss
@@ -105,6 +115,7 @@ public class MiniPage {
 			throw e;
 		}
 	}
+	
 
 	/**
 	 * @param sheet
@@ -143,7 +154,19 @@ public class MiniPage {
 		}
 		return sb.toString();
 	}
-
+	
+	/**
+	 * @param sheet
+	 * @return
+	 * @throws IOException
+	 */
+	private static MiniBody createHtmlFile(XSSFSheet sheet) throws IOException {
+		MiniBody body = createBodyContent(sheet);
+		File file = new File(String.format("out/%s.html", sheet.getSheetName()));
+		FileUtils.writeStringToFile(file, body.getHtml(), Charset.forName(CharEncoding.UTF_8));
+		return body;
+	}
+	
 	/**
 	 * @param xssfSheet
 	 * @return
@@ -177,7 +200,7 @@ public class MiniPage {
 		body.setHtml(sb.toString());
 		return body;
 	}
-
+	
 	/**
 	 * @param body
 	 * @param self
@@ -201,135 +224,7 @@ public class MiniPage {
 
 		return mc;
 	}
-
-	/**
-	 * @param mc
-	 * @param cell
-	 * @param body
-	 */
-
-	private static void drawCellContent(MiniCell mc, XSSFCell cell, MiniBody body) {
-		
-		mc.getClasses().add("R");
-		mc.getClasses().add("C");
-		mc.getClasses().add("R" + cell.getRowIndex());
-		mc.getClasses().add("C" + cell.getColumnIndex());
-		
-		CellRangeAddress range = getMergedRangeByAllCell(cell);
-		if (range != null) {
-			XSSFCell firstCell = cell.getSheet().getRow(range.getFirstRow()).getCell(range.getFirstColumn());
-			if (cell.getRowIndex() == firstCell.getRowIndex() && cell.getColumnIndex() == firstCell.getColumnIndex()) {
-				drawFirstCellContent(mc, firstCell, body);
-			}
-		} else {
-			drawFirstCellContent(mc, cell, body);
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private static void drawFirstCellContent(MiniCell mc, XSSFCell cell, MiniBody body) {
-
-		XSSFComment comment = cell.getCellComment();
-		XSSFColor bgColor = cell.getCellStyle().getFillForegroundColorColor();
-
-		if (cell.toString() == "" && comment == null && bgColor == null) {
-			mc.creatHtml();
-			return;
-		}
-
-		mc.setInner(getMiniInner(cell, body));
-		switch (cell.getCellType()) {
-		case HSSFCell.CELL_TYPE_FORMULA:
-			mc.setContent(getControlByCell(cell));
-			break;
-		default:
-			cell.setCellType(Cell.CELL_TYPE_STRING);
-			mc.setContent("<pre>" + cell.getStringCellValue() + "</pre>");
-			break;
-		}
-		mc.creatHtml();
-	}
-
-	/**
-	 * @param needCss
-	 * @param classValue
-	 * @return
-	 */
-	private static String getCssKeyByValue(HashMap<String, String> needCss, String classValue) {
-		for (String key : needCss.keySet()) {
-			if (needCss.get(key).equals(classValue)) {
-				return key;
-			}
-		}
-		return "";
-	}
-
-	/**
-	 * @param cell
-	 * @return
-	 */
-	private static String getCellClassName(XSSFCell cell) {
-		return "S" + getSheetIndex(cell.getSheet()) + "R" + cell.getRowIndex() + "C" + cell.getColumnIndex();
-	}
-
-	/**
-	 * @param xssfSheet
-	 * @return
-	 */
-	private static int getSheetIndex(XSSFSheet xssfSheet) {
-		XSSFWorkbook book = xssfSheet.getWorkbook();
-		int cntSheet = book.getNumberOfSheets();
-		for (int index = 0; index < cntSheet; index++) {
-			XSSFSheet sheet = book.getSheetAt(index);
-			if (sheet.getSheetName().equals(xssfSheet.getSheetName())) {
-				return index;
-			}
-		}
-		return 0;
-	}
-
-	/**
-	 * @param cell
-	 * @return
-	 */
-	private static String getControlByCell(XSSFCell cell) {
-		CellReference ref = new CellReference(cell.getCellFormula());
-		XSSFRow row = cell.getSheet().getRow(ref.getRow());
-		HashMap<String, String> properties = new HashMap<String, String>();
-		properties.put("id", row.getCell(24).toString());
-		properties.put("name", row.getCell(25).toString());
-		properties.put("type", row.getCell(26).toString());
-		properties.put("value", row.getCell(27).toString());
-		properties.put("class", row.getCell(28).toString());
-		properties.put("onclick", row.getCell(29).toString());
-		properties.put("mode", row.getCell(30).toString());
-		if (properties.get("type").equals("label")) {
-			return properties.get("value");
-		}
-		if (properties.get("mode") != "") {
-			String div = "<div hide={ mode=='" + properties.get("mode") + "' }>" + properties.get("value") + "</div>"
-					+ "<div show={ mode=='" + properties.get("mode") + "' }>%s</div>";
-			return String.format(div, getControlHtml(properties));
-		}
-		return getControlHtml(properties);
-	}
-
-	/**
-	 * @param properties
-	 * @return
-	 */
-	private static String getControlHtml(HashMap<String, String> properties) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("<input ");
-		for (String key : properties.keySet()) {
-			String property = properties.get(key);
-			if (property != "") {
-				sb.append(key).append("=\"").append(property).append("\" ");
-			}
-		}
-		return sb.append(" />").toString();
-	}
-
+	
 	/**
 	 * @param mc
 	 * @param cell
@@ -337,6 +232,7 @@ public class MiniPage {
 	 * @param bottom
 	 */
 	private static void drawCellBorder(MiniCell mc, XSSFCell cell, XSSFCell right, XSSFCell bottom) {
+		//TODO fix bug
 		List<CellRangeAddress> list = cell.getSheet().getMergedRegions();
 		if (isInMergedRange(cell, list)) {
 			drawMergedCellBorder(mc, cell, list, right, bottom);
@@ -390,7 +286,7 @@ public class MiniPage {
 			}
 		}
 	}
-
+	
 	/**
 	 * @param cell
 	 * @param list
@@ -464,6 +360,54 @@ public class MiniPage {
 	/**
 	 * @param mc
 	 * @param cell
+	 * @param body
+	 */
+
+	private static void drawCellContent(MiniCell mc, XSSFCell cell, MiniBody body) {
+		
+		mc.getClasses().add("R");
+		mc.getClasses().add("C");
+		mc.getClasses().add("R" + cell.getRowIndex());
+		mc.getClasses().add("C" + cell.getColumnIndex());
+		
+		CellRangeAddress range = getMergedRangeByAllCell(cell);
+		if (range != null) {
+			XSSFCell firstCell = cell.getSheet().getRow(range.getFirstRow()).getCell(range.getFirstColumn());
+			if (cell.getRowIndex() == firstCell.getRowIndex() && cell.getColumnIndex() == firstCell.getColumnIndex()) {
+				drawFirstCellContent(mc, firstCell, body);
+			}
+		} else {
+			drawFirstCellContent(mc, cell, body);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void drawFirstCellContent(MiniCell mc, XSSFCell cell, MiniBody body) {
+
+		XSSFComment comment = cell.getCellComment();
+		XSSFColor bgColor = cell.getCellStyle().getFillForegroundColorColor();
+
+		if (cell.toString() == "" && comment == null && bgColor == null) {
+			mc.creatHtml();
+			return;
+		}
+
+		mc.setInner(getMiniInner(cell, body));
+		switch (cell.getCellType()) {
+		case HSSFCell.CELL_TYPE_FORMULA:
+			mc.setContent(getControlByCell(cell));
+			break;
+		default:
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			mc.setContent("<pre>" + cell.getStringCellValue() + "</pre>");
+			break;
+		}
+		mc.creatHtml();
+	}
+	
+	/**
+	 * @param mc
+	 * @param cell
 	 * @return
 	 */
 	private static MiniInner getMiniInner(XSSFCell cell, MiniBody body) {
@@ -525,6 +469,86 @@ public class MiniPage {
 		return inner;
 	}
 
+	/**
+	 * @param cell
+	 * @return
+	 */
+	private static String getControlByCell(XSSFCell cell) {
+		CellReference ref = new CellReference(cell.getCellFormula());
+		XSSFRow row = cell.getSheet().getRow(ref.getRow());
+		HashMap<String, String> properties = new HashMap<String, String>();
+		properties.put("id", row.getCell(24).toString());
+		properties.put("name", row.getCell(25).toString());
+		properties.put("type", row.getCell(26).toString());
+		properties.put("value", row.getCell(27).toString());
+		properties.put("class", row.getCell(28).toString());
+		properties.put("onclick", row.getCell(29).toString());
+		properties.put("mode", row.getCell(30).toString());
+		if (properties.get("type").equals("label")) {
+			return properties.get("value");
+		}
+		if (properties.get("mode") != "") {
+			String div = "<div hide={ mode=='" + properties.get("mode") + "' }>" + properties.get("value") + "</div>"
+					+ "<div show={ mode=='" + properties.get("mode") + "' }>%s</div>";
+			return String.format(div, getControlHtml(properties));
+		}
+		return getControlHtml(properties);
+	}
+
+	/**
+	 * @param properties
+	 * @return
+	 */
+	private static String getControlHtml(HashMap<String, String> properties) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<input ");
+		for (String key : properties.keySet()) {
+			String property = properties.get(key);
+			if (property != "") {
+				sb.append(key).append("=\"").append(property).append("\" ");
+			}
+		}
+		return sb.append(" />").toString();
+	}
+
+	/**
+	 * @param needCss
+	 * @param classValue
+	 * @return
+	 */
+	private static String getCssKeyByValue(HashMap<String, String> needCss, String classValue) {
+		for (String key : needCss.keySet()) {
+			if (needCss.get(key).equals(classValue)) {
+				return key;
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * @param cell
+	 * @return
+	 */
+	private static String getCellClassName(XSSFCell cell) {
+		return "S" + getSheetIndex(cell.getSheet()) + "R" + cell.getRowIndex() + "C" + cell.getColumnIndex();
+	}
+	
+	/**
+	 * @param xssfSheet
+	 * @return
+	 */
+	private static int getSheetIndex(XSSFSheet xssfSheet) {
+		XSSFWorkbook book = xssfSheet.getWorkbook();
+		int cntSheet = book.getNumberOfSheets();
+		for (int index = 0; index < cntSheet; index++) {
+			XSSFSheet sheet = book.getSheetAt(index);
+			if (sheet.getSheetName().equals(xssfSheet.getSheetName())) {
+				return index;
+			}
+		}
+		return 0;
+	}
+	
 	/**
 	 * @param cell
 	 * @param colour
@@ -617,27 +641,5 @@ public class MiniPage {
 			return "2";
 		}
 		return "";
-	}
-
-	/**
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 */
-	private static XSSFWorkbook readDesignFile(String file) throws IOException {
-		FileInputStream execlFileStream = null;
-		XSSFWorkbook book = null;
-
-		try {
-			execlFileStream = new FileInputStream(new File(file));
-			book = new XSSFWorkbook(execlFileStream);
-			execlFileStream.close();
-		} catch (IOException e) {
-			System.out.println("Can Not Read File:" + e.getMessage());
-			throw e;
-		} finally {
-			execlFileStream.close();
-		}
-		return book;
 	}
 }
