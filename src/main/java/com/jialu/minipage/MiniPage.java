@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
@@ -80,6 +81,9 @@ public class MiniPage {
 		for (int index = 0; index < cntSheet; index++) {
 			XSSFSheet sheet = book.getSheetAt(index);
 			if (sheet.getSheetName().startsWith("_")) {
+				if (sheet.getSheetName().equals("_css")) {
+					createCssFile(sheet);
+				}
 				continue;
 			}
 			String path = createHtmlFile(sheet);
@@ -88,6 +92,48 @@ public class MiniPage {
 			}
 		}
 		return indexPath;
+	}
+
+	/**
+	 * @param sheet
+	 * @throws IOException
+	 */
+	private static void createCssFile(XSSFSheet sheet) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		String cssContent = createCssContent(sheet);
+		sb.append(cssContent).append("\r\n");
+		File file = new File(String.format("out/app.css", sheet.getSheetName()));
+		FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
+
+	}
+
+	private static String createCssContent(XSSFSheet sheet) {
+		StringBuilder sb = new StringBuilder();
+		int lastRow = sheet.getLastRowNum();
+		System.out.println("lastRow" + lastRow);
+		for (int row = 0; row <= lastRow; row++) {
+			int lastCol = sheet.getRow(row).getLastCellNum();
+			System.out.println("lastCol" + lastCol);
+			for (int col = 0; col <= lastCol; col++) {
+				XSSFCell cell = sheet.getRow(row).getCell(col);
+				if (cell != null) {
+					String content = cell.toString();
+					if (lastCol > 1) {
+						if (col == 0) {
+							sb.append(content).append("{");
+						} else if (col == (lastCol - 1)) {
+							sb.append(content).append("}");
+						}else{
+							sb.append(content);
+						}
+					} else {
+						sb.append(content);
+					}
+				}
+			}
+			sb.append("\r\n");
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -186,26 +232,39 @@ public class MiniPage {
 	private static String getControlByCell(XSSFCell cell) {
 		CellReference ref = new CellReference(cell.getCellFormula());
 		XSSFRow row = cell.getSheet().getRow(ref.getRow());
-		String inId = row.getCell(24).toString();
-		String inName = row.getCell(25).toString();
-		String inType = row.getCell(26).toString();
-		String inValue = row.getCell(27).toString();
-		String inClass = row.getCell(28).toString();
-		String inClick = row.getCell(29).toString();
-		String inMode = row.getCell(30).toString();
-		if(inType.equals("label")){
-			return inValue;
+		HashMap<String, String> properties = new HashMap<String, String>();
+		properties.put("id", row.getCell(24).toString());
+		properties.put("name", row.getCell(25).toString());
+		properties.put("type", row.getCell(26).toString());
+		properties.put("value", row.getCell(27).toString());
+		properties.put("class", row.getCell(28).toString());
+		properties.put("onclick", row.getCell(29).toString());
+		properties.put("mode", row.getCell(30).toString());
+		if (properties.get("type").equals("label")) {
+			return properties.get("value");
 		}
-		if (inMode != "") {
-			String control = "<div hide={ mode=='" + inMode + "' }>" + inValue + "</div>" + "<div show={ mode=='"
-					+ inMode + "' }>%s</div>";
-			return String.format(control,
-					String.format(
-							"<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\" onclick={%s}/>",
-							inId, inName, inType, inValue, inClass, inClick));
+		if (properties.get("mode") != "") {
+			String div = "<div hide={ mode=='" + properties.get("mode") + "' }>" + properties.get("value") + "</div>"
+					+ "<div show={ mode=='" + properties.get("mode") + "' }>%s</div>";
+			return String.format(div, getControlHtml(properties));
 		}
-		return String.format("<input id=\"%s\"  name=\"%s\"  type=\"%s\"  value=\"%s\" class=\"%s\" onclick={%s}/>",
-				inId, inName, inType, inValue, inClass, inClick);
+		return getControlHtml(properties);
+	}
+
+	/**
+	 * @param properties
+	 * @return
+	 */
+	private static String getControlHtml(HashMap<String, String> properties) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<input ");
+		for (String key : properties.keySet()) {
+			String property = properties.get(key);
+			if (property != "") {
+				sb.append(key).append("=\"").append(property).append("\" ");
+			}
+		}
+		return sb.append(" />").toString();
 	}
 
 	/**
