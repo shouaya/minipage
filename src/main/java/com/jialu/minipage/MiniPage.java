@@ -2,7 +2,9 @@ package com.jialu.minipage;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.google.common.io.Resources;
+import com.yahoo.platform.yui.compressor.CssCompressor;
 
 /**
  * @author EB060
@@ -61,13 +64,13 @@ public class MiniPage {
 	 * @return
 	 * @throws IOException
 	 */
-	private static String createHtmlFile(XSSFSheet sheet) throws IOException {
+	private static HashMap<String, String> createHtmlFile(XSSFSheet sheet) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		String bodyContent = createBodyContent(sheet);
 		sb.append(bodyContent).append("\r\n");
 		File file = new File(String.format("out/%s.html", sheet.getSheetName()));
 		FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
-		return file.getCanonicalPath();
+		return new HashMap<String, String>();
 	}
 
 	/**
@@ -78,42 +81,46 @@ public class MiniPage {
 	private static String createHtmlFile(XSSFWorkbook book) throws IOException {
 		int cntSheet = book.getNumberOfSheets();
 		String indexPath = "";
+		HashMap<String, String> needAddCss = new HashMap<String, String>();
 		for (int index = 0; index < cntSheet; index++) {
 			XSSFSheet sheet = book.getSheetAt(index);
 			if (sheet.getSheetName().startsWith("_")) {
-				if (sheet.getSheetName().equals("_css")) {
-					createCssFile(sheet);
-				}
 				continue;
 			}
-			String path = createHtmlFile(sheet);
-			if (index == 0) {
-				indexPath = path;
-			}
+			needAddCss.putAll(createHtmlFile(sheet));
 		}
+		createCssFile(book.getSheet("_css"), needAddCss);
 		return indexPath;
 	}
 
 	/**
 	 * @param sheet
+	 * @param needAddCss
 	 * @throws IOException
 	 */
-	private static void createCssFile(XSSFSheet sheet) throws IOException {
+	private static void createCssFile(XSSFSheet sheet, HashMap<String, String> needAddCss) throws IOException {
 		StringBuilder sb = new StringBuilder();
-		String cssContent = createCssContent(sheet);
+		String cssContent = createCssContent(sheet, needAddCss);
 		sb.append(cssContent).append("\r\n");
-		File file = new File(String.format("out/app.css", sheet.getSheetName()));
-		FileUtils.writeStringToFile(file, sb.toString(), Charset.forName(CharEncoding.UTF_8));
-
+		try (StringReader reader = new StringReader(sb.toString());
+				FileWriter fw = new FileWriter(String.format("out/app.css", sheet.getSheetName()));) {
+			CssCompressor cssc = new CssCompressor(reader);
+			cssc.compress(fw, 1000);
+		} catch (IOException e) {
+			throw e;
+		}
 	}
 
-	private static String createCssContent(XSSFSheet sheet) {
+	/**
+	 * @param sheet
+	 * @param needAddCss
+	 * @return
+	 */
+	private static String createCssContent(XSSFSheet sheet, HashMap<String, String> needAddCss) {
 		StringBuilder sb = new StringBuilder();
 		int lastRow = sheet.getLastRowNum();
-		System.out.println("lastRow" + lastRow);
 		for (int row = 0; row <= lastRow; row++) {
 			int lastCol = sheet.getRow(row).getLastCellNum();
-			System.out.println("lastCol" + lastCol);
 			for (int col = 0; col <= lastCol; col++) {
 				XSSFCell cell = sheet.getRow(row).getCell(col);
 				if (cell != null) {
@@ -123,7 +130,7 @@ public class MiniPage {
 							sb.append(content).append("{");
 						} else if (col == (lastCol - 1)) {
 							sb.append(content).append("}");
-						}else{
+						} else {
 							sb.append(content);
 						}
 					} else {
@@ -132,6 +139,9 @@ public class MiniPage {
 				}
 			}
 			sb.append("\r\n");
+		}
+		for (String key : needAddCss.keySet()) {
+			sb.append(key).append("{").append(needAddCss.get(key)).append("}").append("\r\n");
 		}
 		return sb.toString();
 	}
