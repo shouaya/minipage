@@ -8,7 +8,6 @@ import java.util.List;
  */
 public class MiniInner {
 	private List<String> classes;
-	private List<String> styles;
 
 	public List<String> getClasses() {
 		return classes;
@@ -18,11 +17,4 @@ public class MiniInner {
 		this.classes = classes;
 	}
 
-	public List<String> getStyles() {
-		return styles;
-	}
-
-	public void setStyles(List<String> styles) {
-		this.styles = styles;
-	}
 }
