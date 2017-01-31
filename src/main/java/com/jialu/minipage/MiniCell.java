@@ -16,11 +16,10 @@ public class MiniCell {
 	private String content;
 	private String html;
 	private MiniInner inner;
-	
+
 	private XSSFCell right;
-	private XSSFCell bottom;	
+	private XSSFCell bottom;
 	private XSSFCell self;
-	
 
 	public MiniCell() {
 		this.setHtml("");
@@ -65,7 +64,7 @@ public class MiniCell {
 		}
 		if (this.classes.size() > 0) {
 			this.html = String.format("<div class=\"%s\"></div>%s", StringUtils.join(this.classes, " "), content);
-		} else {
+		} else if (!this.content.equals("")) {
 			this.html = String.format("<div></div>%s", content);
 		}
 	}
@@ -76,13 +75,13 @@ public class MiniCell {
 	 */
 	private void changeCellBorderClass(List<String> father, List<String> child) {
 		Iterator<String> css = father.iterator();
-        while(css.hasNext()){
-        	String name = css.next();
-        	if (name.startsWith("BT") || name.startsWith("BB") || name.startsWith("BL") || name.startsWith("BR")) {
-        		css.remove();
+		while (css.hasNext()) {
+			String name = css.next();
+			if (name.startsWith("BT") || name.startsWith("BB") || name.startsWith("BL") || name.startsWith("BR")) {
+				css.remove();
 				child.add(name);
 			}
-        }
+		}
 	}
 
 	public MiniInner getInner() {
