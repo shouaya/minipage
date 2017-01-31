@@ -1,1 +1,1 @@
-gem install filewatcher
+gem install filewatcher && gem install webrick
