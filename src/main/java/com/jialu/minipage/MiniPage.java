@@ -9,6 +9,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.FileUtils;
@@ -54,7 +55,7 @@ public class MiniPage {
 		createHtmlFile(book);
 		System.out.println("HTMLを生成しました。");
 	}
-	
+
 	/**
 	 * @param file
 	 * @return
@@ -76,7 +77,7 @@ public class MiniPage {
 		}
 		return book;
 	}
-	
+
 	/**
 	 * @param book
 	 * @return
@@ -91,13 +92,15 @@ public class MiniPage {
 			if (sheet.getSheetName().startsWith("_")) {
 				continue;
 			}
+			System.out.println(sheet.getSheetName() + "はじまります。");
 			MiniBody body = createHtmlFile(sheet);
 			needAddCss.putAll(body.getCss());
+			System.out.println(sheet.getSheetName() + "終わりました。");
 		}
 		createCssFile(book.getSheet("_css"), needAddCss);
 		return indexPath;
 	}
-	
+
 	/**
 	 * @param sheet
 	 * @param needAddCss
@@ -115,7 +118,6 @@ public class MiniPage {
 			throw e;
 		}
 	}
-	
 
 	/**
 	 * @param sheet
@@ -154,7 +156,7 @@ public class MiniPage {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @param sheet
 	 * @return
@@ -166,7 +168,7 @@ public class MiniPage {
 		FileUtils.writeStringToFile(file, body.getHtml(), Charset.forName(CharEncoding.UTF_8));
 		return body;
 	}
-	
+
 	/**
 	 * @param xssfSheet
 	 * @return
@@ -177,17 +179,24 @@ public class MiniPage {
 		body.setCss(new HashMap<String, String>());
 		StringBuilder sb = new StringBuilder();
 		sb.append("<").append(xssfSheet.getSheetName()).append(">\r\n");
+		body.setCells(new LinkedHashMap<String, MiniCell>());
 		for (int row = 0; row < MAX_ROW_CNT; row++) {
 			for (int col = 0; col < MAX_COL_CNT; col++) {
-				XSSFCell right = col < MAX_COL_CNT - 1 ? xssfSheet.getRow(row).getCell(col + 1) : null;
-				XSSFCell bottom = row < MAX_ROW_CNT - 1 ? xssfSheet.getRow(row + 1).getCell(col) : null;
-				XSSFCell self = xssfSheet.getRow(row).getCell(col);
-				MiniCell cell = createMiniCell(body, self, right, bottom);
-				String html = cell.getHtml();
-				sb.append(html);
-				if (html.length() > 0) {
-					sb.append("\r\n");
-				}
+				MiniCell cell = new MiniCell();
+				cell.setBottom(row < MAX_ROW_CNT - 1 ? xssfSheet.getRow(row + 1).getCell(col) : null);
+				cell.setRight(col < MAX_COL_CNT - 1 ? xssfSheet.getRow(row).getCell(col + 1) : null);
+				cell.setSelf(xssfSheet.getRow(row).getCell(col));
+				body.getCells().put(xssfSheet.getSheetName() + "R" + row + "C" + col, cell);
+				createMiniCell(body, cell);
+			}
+			//System.out.println();
+		}
+		for(String key : body.getCells().keySet()){
+			body.getCells().get(key).creatHtml();
+			String html = body.getCells().get(key).getHtml();
+			sb.append(html);
+			if (html.length() > 0) {
+				sb.append("\r\n");
 			}
 		}
 		String scriptPath = "javascript/" + xssfSheet.getSheetName() + ".js";
@@ -200,93 +209,106 @@ public class MiniPage {
 		body.setHtml(sb.toString());
 		return body;
 	}
-	
+
 	/**
 	 * @param body
-	 * @param self
-	 * @param right
-	 * @param bottom
+	 * @param mc
 	 * @return
 	 */
-	private static MiniCell createMiniCell(MiniBody body, XSSFCell self, XSSFCell right, XSSFCell bottom) {
-		MiniCell mc = new MiniCell();
-		if (self == null) {
+	private static MiniCell createMiniCell(MiniBody body, MiniCell mc) {
+		if (mc.getSelf() == null) {
 			return mc;
 		}
-		drawCellBorder(mc, self, right, bottom);
+		drawCellBorder(mc, body);
 
-		XSSFColor bgColor = self.getCellStyle().getFillForegroundColorColor();
-		if (self.toString() == "" && mc.getClasses().size() == 0 && bgColor == null) {
+		XSSFColor bgColor = mc.getSelf().getCellStyle().getFillForegroundColorColor();
+		if (mc.getSelf().toString() == "" && mc.getClasses().size() == 0 && bgColor == null) {
 			return mc;
 		}
 
-		drawCellContent(mc, self, body);
+		drawCellContent(mc, body);
 
 		return mc;
 	}
-	
+
 	/**
 	 * @param mc
-	 * @param cell
-	 * @param right
-	 * @param bottom
+	 * @param body
 	 */
-	private static void drawCellBorder(MiniCell mc, XSSFCell cell, XSSFCell right, XSSFCell bottom) {
-		//TODO fix bug
-		List<CellRangeAddress> list = cell.getSheet().getMergedRegions();
-		if (isInMergedRange(cell, list)) {
-			drawMergedCellBorder(mc, cell, list, right, bottom);
+	private static void drawCellBorder(MiniCell mc, MiniBody body) {
+		if (isInMergedRange(mc.getSelf())) {
+			drawMergedCellBorder(mc, body);
 			return;
 		}
-		if (cell.getCellStyle().getBorderLeftEnum().getCode() > 0) {
-			mc.getClasses().add("BL" + getCssBorder(cell.getCellStyle().getBorderLeftEnum()));
+		if (mc.getSelf().getCellStyle().getBorderLeftEnum().getCode() > 0) {
+			mc.getClasses().add("BL" + getCssBorder(mc.getSelf().getCellStyle().getBorderLeftEnum()));
 		}
-		if (cell.getCellStyle().getBorderRightEnum().getCode() > 0) {
-			if (right == null || right.getCellStyle().getBorderLeftEnum().getCode() <= 0) {
-				mc.getClasses().add("BR" + getCssBorder(cell.getCellStyle().getBorderRightEnum()));
+		if (mc.getSelf().getCellStyle().getBorderRightEnum().getCode() > 0) {
+			if (mc.getRight() == null || mc.getRight().getCellStyle().getBorderLeftEnum().getCode() <= 0) {
+				mc.getClasses().add("BR" + getCssBorder(mc.getSelf().getCellStyle().getBorderRightEnum()));
 			}
 		}
-		if (cell.getCellStyle().getBorderTopEnum().getCode() > 0) {
-			mc.getClasses().add("BT" + getCssBorder(cell.getCellStyle().getBorderTopEnum()));
+		if (mc.getSelf().getCellStyle().getBorderTopEnum().getCode() > 0) {
+			mc.getClasses().add("BT" + getCssBorder(mc.getSelf().getCellStyle().getBorderTopEnum()));
 		}
-		if (cell.getCellStyle().getBorderBottomEnum().getCode() > 0) {
-			if (bottom == null || bottom.getCellStyle().getBorderTopEnum().getCode() <= 0) {
-				mc.getClasses().add("BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum()));
+		if (mc.getSelf().getCellStyle().getBorderBottomEnum().getCode() > 0) {
+			if (mc.getBottom() == null || mc.getBottom().getCellStyle().getBorderTopEnum().getCode() <= 0) {
+				mc.getClasses().add("BB" + getCssBorder(mc.getSelf().getCellStyle().getBorderBottomEnum()));
 			}
 		}
 	}
 
 	/**
 	 * @param mc
-	 * @param cell
-	 * @param list
-	 * @param right
-	 * @param bottom
+	 * @param body
 	 */
-	private static void drawMergedCellBorder(MiniCell mc, XSSFCell cell, List<CellRangeAddress> list, XSSFCell right,
-			XSSFCell bottom) {
-		boolean isLeftCell = isLeftCellInMergedRange(cell, list);
-		if (isLeftCell && cell.getCellStyle().getBorderLeftEnum().getCode() > 0) {
-			mc.getClasses().add("BL" + getCssBorder(cell.getCellStyle().getBorderLeftEnum()));
-		}
-		boolean isBottomCell = isBottomCellInMergedRange(cell, list);
-		if (isBottomCell && cell.getCellStyle().getBorderBottomEnum().getCode() > 0) {
-			if (bottom == null || bottom.getCellStyle().getBorderTopEnum().getCode() <= 0) {
-				mc.getClasses().add("BB" + getCssBorder(cell.getCellStyle().getBorderBottomEnum()));
+	private static void drawMergedCellBorder(MiniCell mc, MiniBody body) {
+		//System.out.print("R" + mc.getSelf().getRowIndex() + "C" + mc.getSelf().getColumnIndex());
+		CellRangeAddress range = getMergedRangeByAllCell(mc.getSelf());
+		String firstCellKey = mc.getSelf().getSheet().getSheetName() + "R" + range.getFirstRow() + "C"
+				+ range.getFirstColumn();
+		//System.out.print(" F:" + "R" + range.getFirstRow() + "C" + range.getFirstColumn());
+		MiniCell firstCell = body.getCells().get(firstCellKey);
+		List<CellRangeAddress> list = mc.getSelf().getSheet().getMergedRegions();
+		boolean isLeftCell = isLeftCellInMergedRange(mc.getSelf(), list);
+		if (isLeftCell && mc.getSelf().getCellStyle().getBorderLeftEnum().getCode() > 0) {
+			// first mc add this class
+			String style = "BL" + getCssBorder(mc.getSelf().getCellStyle().getBorderLeftEnum());
+			if (!firstCell.getClasses().contains(style)) {
+				firstCell.getClasses().add(style);
+				//System.out.print(style);
 			}
 		}
-		boolean isTopCell = isTopCellInMergedRange(cell, list);
-		if (isTopCell && cell.getCellStyle().getBorderTopEnum().getCode() > 0) {
-			mc.getClasses().add("BT" + getCssBorder(cell.getCellStyle().getBorderTopEnum()));
-		}
-		boolean isRightCell = isRightCellInMergedRange(cell, list);
-		if (isRightCell && cell.getCellStyle().getBorderRightEnum().getCode() > 0) {
-			if (right == null || right.getCellStyle().getBorderLeftEnum().getCode() <= 0) {
-				mc.getClasses().add("BR" + getCssBorder(cell.getCellStyle().getBorderRightEnum()));
+		boolean isBottomCell = isBottomCellInMergedRange(mc.getSelf(), list);
+		if (isBottomCell && mc.getSelf().getCellStyle().getBorderBottomEnum().getCode() > 0) {
+			// first mc add this class
+			String style = "BB" + getCssBorder(mc.getSelf().getCellStyle().getBorderBottomEnum());
+			if (!firstCell.getClasses().contains(style)) {
+				firstCell.getClasses().add(style);
+				//System.out.print(style);
 			}
 		}
+		boolean isTopCell = isTopCellInMergedRange(mc.getSelf(), list);
+		if (isTopCell && mc.getSelf().getCellStyle().getBorderTopEnum().getCode() > 0) {
+			// first mc add this class
+			String style = "BT" + getCssBorder(mc.getSelf().getCellStyle().getBorderTopEnum());
+			if (!firstCell.getClasses().contains(style)) {
+				firstCell.getClasses().add(style);
+				//System.out.print(style);
+			}
+		}
+		boolean isRightCell = isRightCellInMergedRange(mc.getSelf(), list);
+		if (isRightCell && mc.getSelf().getCellStyle().getBorderRightEnum().getCode() > 0) {
+			// first mc add this class
+			String style = "BR" + getCssBorder(mc.getSelf().getCellStyle().getBorderRightEnum());
+			if (!firstCell.getClasses().contains(style)) {
+				firstCell.getClasses().add(style);
+				//System.out.print(style);
+			}
+		}
+		//System.out.print("\t");
 	}
-	
+
 	/**
 	 * @param cell
 	 * @param list
@@ -345,10 +367,10 @@ public class MiniPage {
 
 	/**
 	 * @param cell
-	 * @param list
 	 * @return
 	 */
-	private static boolean isInMergedRange(XSSFCell cell, List<CellRangeAddress> list) {
+	private static boolean isInMergedRange(XSSFCell cell) {
+		List<CellRangeAddress> list = cell.getSheet().getMergedRegions();
 		for (CellRangeAddress range : list) {
 			if (range.containsColumn(cell.getColumnIndex()) && range.containsRow(cell.getRowIndex())) {
 				return true;
@@ -363,21 +385,22 @@ public class MiniPage {
 	 * @param body
 	 */
 
-	private static void drawCellContent(MiniCell mc, XSSFCell cell, MiniBody body) {
-		
+	private static void drawCellContent(MiniCell mc, MiniBody body) {
+
 		mc.getClasses().add("R");
 		mc.getClasses().add("C");
-		mc.getClasses().add("R" + cell.getRowIndex());
-		mc.getClasses().add("C" + cell.getColumnIndex());
-		
-		CellRangeAddress range = getMergedRangeByAllCell(cell);
+		mc.getClasses().add("R" + mc.getSelf().getRowIndex());
+		mc.getClasses().add("C" + mc.getSelf().getColumnIndex());
+
+		CellRangeAddress range = getMergedRangeByAllCell(mc.getSelf());
 		if (range != null) {
-			XSSFCell firstCell = cell.getSheet().getRow(range.getFirstRow()).getCell(range.getFirstColumn());
-			if (cell.getRowIndex() == firstCell.getRowIndex() && cell.getColumnIndex() == firstCell.getColumnIndex()) {
+			XSSFCell firstCell = mc.getSelf().getSheet().getRow(range.getFirstRow()).getCell(range.getFirstColumn());
+			if (mc.getSelf().getRowIndex() == firstCell.getRowIndex()
+					&& mc.getSelf().getColumnIndex() == firstCell.getColumnIndex()) {
 				drawFirstCellContent(mc, firstCell, body);
 			}
 		} else {
-			drawFirstCellContent(mc, cell, body);
+			drawFirstCellContent(mc, mc.getSelf(), body);
 		}
 	}
 
@@ -388,7 +411,6 @@ public class MiniPage {
 		XSSFColor bgColor = cell.getCellStyle().getFillForegroundColorColor();
 
 		if (cell.toString() == "" && comment == null && bgColor == null) {
-			mc.creatHtml();
 			return;
 		}
 
@@ -402,9 +424,8 @@ public class MiniPage {
 			mc.setContent("<pre>" + cell.getStringCellValue() + "</pre>");
 			break;
 		}
-		mc.creatHtml();
 	}
-	
+
 	/**
 	 * @param mc
 	 * @param cell
@@ -532,7 +553,7 @@ public class MiniPage {
 	private static String getCellClassName(XSSFCell cell) {
 		return "S" + getSheetIndex(cell.getSheet()) + "R" + cell.getRowIndex() + "C" + cell.getColumnIndex();
 	}
-	
+
 	/**
 	 * @param xssfSheet
 	 * @return
@@ -548,7 +569,7 @@ public class MiniPage {
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * @param cell
 	 * @param colour

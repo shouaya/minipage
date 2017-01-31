@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>MyLINE管理</title>
+  <base href="/out/" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="yes" />
+  <link rel="shortcut icon" href="https://api.9jialu.com/app/favicon.ico" />
+  <link rel="stylesheet" href="weui.css?v=10">
+  <link rel="stylesheet" href="app.css?v=10">
+</head>
+<body>
+  <admin></admin>
+  <user></user>
+  <reply></reply>
+  <message></message>
+  <script type="text/javascript">
+        var cssEl = document.createElement('style');
+        document.documentElement.firstElementChild.appendChild(cssEl);
+        function setPxPerRem(){
+            var dpr = 1;
+            var pxPerRem = document.documentElement.clientWidth * dpr / 20;
+            cssEl.innerHTML = 'html{font-size:' + pxPerRem + 'px!important;}';
+        }
+        setPxPerRem();
+  </script>
+  <script src="admin.html" type="riot/tag"></script>
+  <script src="user.html" type="riot/tag"></script>
+  <script src="reply.html" type="riot/tag"></script>
+  <script src="message.html" type="riot/tag"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.0.7/riot+compiler.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+  <script>
+  riot.mount('admin', {"name":"admin","role":"admin","userCount":2,"messageCount":60,"replyCount":1,"users":null,"messages":null,"replyMessages":null})
+  </script>
+</html>

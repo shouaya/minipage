@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 
 /**
  * @author EB060
@@ -15,6 +16,11 @@ public class MiniCell {
 	private String content;
 	private String html;
 	private MiniInner inner;
+	
+	private XSSFCell right;
+	private XSSFCell bottom;	
+	private XSSFCell self;
+	
 
 	public MiniCell() {
 		this.setHtml("");
@@ -46,7 +52,7 @@ public class MiniCell {
 	}
 
 	public void creatHtml() {
-		if (this.content == null) {
+		if (this.content == null || this.inner == null) {
 			this.content = "";
 		} else {
 			if (this.inner.getClasses().size() > 0) {
@@ -62,7 +68,6 @@ public class MiniCell {
 		} else {
 			this.html = String.format("<div></div>%s", content);
 		}
-
 	}
 
 	/**
@@ -86,6 +91,30 @@ public class MiniCell {
 
 	public void setInner(MiniInner font) {
 		this.inner = font;
+	}
+
+	public XSSFCell getRight() {
+		return right;
+	}
+
+	public void setRight(XSSFCell right) {
+		this.right = right;
+	}
+
+	public XSSFCell getBottom() {
+		return bottom;
+	}
+
+	public void setBottom(XSSFCell bottom) {
+		this.bottom = bottom;
+	}
+
+	public XSSFCell getSelf() {
+		return self;
+	}
+
+	public void setSelf(XSSFCell self) {
+		this.self = self;
 	}
 
 }
