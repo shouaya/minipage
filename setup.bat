@@ -1,1 +1,1 @@
-gem install filewatcher && gem install webrick
+gem install filewatcher && gem install sinatra && gem install sinatra-contrib
