@@ -5,4 +5,5 @@ redirect(page)
 		self.unmount(true);
 		riot.mount(page, opts);
 	}
+
 }

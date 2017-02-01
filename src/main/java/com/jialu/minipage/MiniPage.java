@@ -49,22 +49,27 @@ public class MiniPage {
 			System.out.println("Parameters Size Error");
 			throw new RuntimeException();
 		}
-		XSSFWorkbook book = readDesignFile(args[0]);
-		createHtmlFile(book);
+		File template = new File(args[0]);
+		if(!template.exists()){
+			System.out.println("file not found:" + template.getAbsolutePath());
+			throw new RuntimeException();
+		}
+		XSSFWorkbook book = readDesignFile(template);
+		createHtmlFile(template, book);
 		System.out.println("HTMLを生成しました。");
 	}
 
 	/**
-	 * @param file
+	 * @param template
 	 * @return
 	 * @throws IOException
 	 */
-	private static XSSFWorkbook readDesignFile(String file) throws IOException {
+	private static XSSFWorkbook readDesignFile(File template) throws IOException {
 		FileInputStream execlFileStream = null;
 		XSSFWorkbook book = null;
 
 		try {
-			execlFileStream = new FileInputStream(new File(file));
+			execlFileStream = new FileInputStream(template);
 			book = new XSSFWorkbook(execlFileStream);
 			execlFileStream.close();
 		} catch (IOException e) {
@@ -77,11 +82,12 @@ public class MiniPage {
 	}
 
 	/**
+	 * @param template 
 	 * @param book
 	 * @return
 	 * @throws IOException
 	 */
-	private static String createHtmlFile(XSSFWorkbook book) throws IOException {
+	private static String createHtmlFile(File template, XSSFWorkbook book) throws IOException {
 		int cntSheet = book.getNumberOfSheets();
 		String indexPath = "";
 		HashMap<String, String> needAddCss = new HashMap<String, String>();
@@ -91,25 +97,27 @@ public class MiniPage {
 				continue;
 			}
 			System.out.println(sheet.getSheetName() + "はじまります。");
-			MiniBody body = createHtmlFile(sheet);
+			MiniBody body = createHtmlFile(template, sheet);
 			needAddCss.putAll(body.getCss());
 			System.out.println(sheet.getSheetName() + "終わりました。");
 		}
-		createCssFile(book.getSheet("_css"), needAddCss);
+		createCssFile(template, book.getSheet("_css"), needAddCss);
 		return indexPath;
 	}
 
 	/**
+	 * @param template 
 	 * @param sheet
 	 * @param needAddCss
 	 * @throws IOException
 	 */
-	private static void createCssFile(XSSFSheet sheet, HashMap<String, String> needAddCss) throws IOException {
+	private static void createCssFile(File template, XSSFSheet sheet, HashMap<String, String> needAddCss) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		String cssContent = createCssContent(sheet, needAddCss);
 		sb.append(cssContent).append("\r\n");
+		String outPath = template.getParentFile().getAbsolutePath() + "/../out";
 		try (StringReader reader = new StringReader(sb.toString());
-				FileWriter fw = new FileWriter(String.format("out/app.css", sheet.getSheetName()));) {
+				FileWriter fw = new FileWriter(String.format(outPath + "/app.css", sheet.getSheetName()));) {
 			CssCompressor cssc = new CssCompressor(reader);
 			cssc.compress(fw, 1000);
 		} catch (IOException e) {
@@ -160,19 +168,21 @@ public class MiniPage {
 	 * @return
 	 * @throws IOException
 	 */
-	private static MiniBody createHtmlFile(XSSFSheet sheet) throws IOException {
-		MiniBody body = createBodyContent(sheet);
-		File file = new File(String.format("out/%s.html", sheet.getSheetName()));
+	private static MiniBody createHtmlFile(File template, XSSFSheet sheet) throws IOException {
+		MiniBody body = createBodyContent(template, sheet);
+		String outPath = template.getParentFile().getAbsolutePath() + "/../out";
+		File file = new File(String.format(outPath + "/%s.html", sheet.getSheetName()));
 		FileUtils.writeStringToFile(file, body.getHtml(), Charset.forName(CharEncoding.UTF_8));
 		return body;
 	}
 
 	/**
+	 * @param template 
 	 * @param xssfSheet
 	 * @return
 	 * @throws IOException
 	 */
-	private static MiniBody createBodyContent(XSSFSheet xssfSheet) throws IOException {
+	private static MiniBody createBodyContent(File template, XSSFSheet xssfSheet) throws IOException {
 		MiniBody body = new MiniBody();
 		body.setCss(new HashMap<String, String>());
 		StringBuilder sb = new StringBuilder();
@@ -187,7 +197,6 @@ public class MiniPage {
 				body.getCells().put(xssfSheet.getSheetName() + "R" + row + "C" + col, cell);
 				createMiniCell(body, cell);
 			}
-			// System.out.println();
 		}
 		for (String key : body.getCells().keySet()) {
 			body.getCells().get(key).creatHtml();
@@ -197,7 +206,8 @@ public class MiniPage {
 				sb.append("\r\n");
 			}
 		}
-		String scriptPath = "javascript/" + xssfSheet.getSheetName() + ".js";
+		String outPath = template.getParentFile().getAbsolutePath();
+		String scriptPath = outPath + "/" + xssfSheet.getSheetName() + ".js";
 		File script = new File(scriptPath);
 		if (script.exists()) {
 			sb.append("\r\n<script>\r\n")
