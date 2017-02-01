@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import com.google.common.io.Resources;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 
 /**
@@ -189,9 +187,9 @@ public class MiniPage {
 				body.getCells().put(xssfSheet.getSheetName() + "R" + row + "C" + col, cell);
 				createMiniCell(body, cell);
 			}
-			//System.out.println();
+			// System.out.println();
 		}
-		for(String key : body.getCells().keySet()){
+		for (String key : body.getCells().keySet()) {
 			body.getCells().get(key).creatHtml();
 			String html = body.getCells().get(key).getHtml();
 			sb.append(html);
@@ -200,10 +198,11 @@ public class MiniPage {
 			}
 		}
 		String scriptPath = "javascript/" + xssfSheet.getSheetName() + ".js";
-		URL p = MiniPage.class.getClassLoader().getResource(scriptPath);
-		if (p != null) {
-			String script = Resources.toString(Resources.getResource(scriptPath), Charset.forName(CharEncoding.UTF_8));
-			sb.append("\r\n<script>\r\n").append(script).append("\r\n</script>\r\n");
+		File script = new File(scriptPath);
+		if (script.exists()) {
+			sb.append("\r\n<script>\r\n")
+			.append(FileUtils.readFileToString(script, "UTF-8"))
+			.append("\r\n</script>\r\n");
 		}
 		sb.append("</").append(xssfSheet.getSheetName()).append(">");
 		body.setHtml(sb.toString());
@@ -263,11 +262,13 @@ public class MiniPage {
 	 * @param body
 	 */
 	private static void drawMergedCellBorder(MiniCell mc, MiniBody body) {
-		//System.out.print("R" + mc.getSelf().getRowIndex() + "C" + mc.getSelf().getColumnIndex());
+		// System.out.print("R" + mc.getSelf().getRowIndex() + "C" +
+		// mc.getSelf().getColumnIndex());
 		CellRangeAddress range = getMergedRangeByAllCell(mc.getSelf());
 		String firstCellKey = mc.getSelf().getSheet().getSheetName() + "R" + range.getFirstRow() + "C"
 				+ range.getFirstColumn();
-		//System.out.print(" F:" + "R" + range.getFirstRow() + "C" + range.getFirstColumn());
+		// System.out.print(" F:" + "R" + range.getFirstRow() + "C" +
+		// range.getFirstColumn());
 		MiniCell firstCell = body.getCells().get(firstCellKey);
 		List<CellRangeAddress> list = mc.getSelf().getSheet().getMergedRegions();
 		boolean isLeftCell = isLeftCellInMergedRange(mc.getSelf(), list);
@@ -276,7 +277,7 @@ public class MiniPage {
 			String style = "BL" + getCssBorder(mc.getSelf().getCellStyle().getBorderLeftEnum());
 			if (!firstCell.getClasses().contains(style)) {
 				firstCell.getClasses().add(style);
-				//System.out.print(style);
+				// System.out.print(style);
 			}
 		}
 		boolean isBottomCell = isBottomCellInMergedRange(mc.getSelf(), list);
@@ -285,7 +286,7 @@ public class MiniPage {
 			String style = "BB" + getCssBorder(mc.getSelf().getCellStyle().getBorderBottomEnum());
 			if (!firstCell.getClasses().contains(style)) {
 				firstCell.getClasses().add(style);
-				//System.out.print(style);
+				// System.out.print(style);
 			}
 		}
 		boolean isTopCell = isTopCellInMergedRange(mc.getSelf(), list);
@@ -294,7 +295,7 @@ public class MiniPage {
 			String style = "BT" + getCssBorder(mc.getSelf().getCellStyle().getBorderTopEnum());
 			if (!firstCell.getClasses().contains(style)) {
 				firstCell.getClasses().add(style);
-				//System.out.print(style);
+				// System.out.print(style);
 			}
 		}
 		boolean isRightCell = isRightCellInMergedRange(mc.getSelf(), list);
@@ -303,10 +304,10 @@ public class MiniPage {
 			String style = "BR" + getCssBorder(mc.getSelf().getCellStyle().getBorderRightEnum());
 			if (!firstCell.getClasses().contains(style)) {
 				firstCell.getClasses().add(style);
-				//System.out.print(style);
+				// System.out.print(style);
 			}
 		}
-		//System.out.print("\t");
+		// System.out.print("\t");
 	}
 
 	/**
