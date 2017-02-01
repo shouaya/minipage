@@ -35,3 +35,44 @@ get '/profile/:id' do |id|
   end
 end
 
+get '/line/user' do
+  content_type :json
+  uri = URI('http://localhost:9000/line/user?' + request.query_string)
+  req = Net::HTTP::Get.new(uri)
+  req.basic_auth 'admin', 'admin'
+  req["Content-Type"] = 'application/json'
+  req.body = request.body.read
+  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    resp = http.request(req)
+	p resp.body
+  end
+end
+
+
+get '/line/message' do
+  content_type :json
+  uri = URI('http://localhost:9000/line/message?' + request.query_string)
+  req = Net::HTTP::Get.new(uri)
+  req.basic_auth 'admin', 'admin'
+  req["Content-Type"] = 'application/json'
+  req.body = request.body.read
+  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    resp = http.request(req)
+	p resp.body
+  end
+end
+
+get '/line/reply' do
+  content_type :json
+  uri = URI('http://localhost:9000/line/reply?' + request.query_string)
+  req = Net::HTTP::Get.new(uri)
+  req.basic_auth 'admin', 'admin'
+  req["Content-Type"] = 'application/json'
+  req.body = request.body.read
+  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    resp = http.request(req)
+	p resp.body
+  end
+end
+
+

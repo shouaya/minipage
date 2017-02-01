@@ -16,13 +16,6 @@
 <div class="R C R15 C2"></div><div class="I R15 C2 S1R1C1 F11"><pre>avatarUrl</pre></div>
 <div class="R C R16 C2"></div><div class="I R16 C2 S1R1C1 F11"><pre>url</pre></div>
 <div class="R C R17 C2"></div><div class="I R17 C2 S1R1C1 F11"><pre>htmlUrl</pre></div>
-<div class="R C R19 C3"></div><div class="I R19 C3 S1R1C1 F11"><pre>s</pre></div>
-<div class="R C R20 C3"></div><div class="I R20 C3 S1R1C1 F11"><pre>d</pre></div>
-<div class="R C R21 C3"></div><div class="I R21 C3 S1R1C1 F11"><pre>s</pre></div>
-<div class="R C R22 C3"></div><div class="I R22 C3 S1R1C1 F11"><pre>s</pre></div>
-<div class="R C R23 C3"></div><div class="I R23 C3 S1R1C1 F11"><pre>d</pre></div>
-<div class="R C R24 C3"></div><div class="I R24 C3 S1R1C1 F11"><pre>d</pre></div>
-<div class="R C R25 C3"></div><div class="I R25 C3 S1R1C1 F11"><pre>hahahahaha</pre></div>
 <div class="R C R34 C0"></div><div class="I R34 C0 CP F11 TA2 VA1 W20 H1 BT3"><pre>Copyright © 2008-2016 EB</pre></div>
 <div class="R C R34 C1"></div>
 <div class="R C R34 C2"></div>
@@ -46,6 +39,20 @@
 
 <script>
 var self = this;
+$.ajax({
+	url : '/line/user?limit=10&offset=0',
+	type : 'GET',
+	dataType:"json",
+	contentType : 'application/json',
+	success : function(data, status) {
+		console.log(data);
+		self.users = data;
+		self.update();
+	},
+	error : function(xhr, type) {
+		alert('error!')
+	}
+});
 redirect(page)
 {
 	return function(e) {
