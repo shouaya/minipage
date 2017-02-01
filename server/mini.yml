@@ -1,0 +1,57 @@
+name: minios
+
+host: api.9jialu.com
+
+debug: false
+
+server:
+  gzip:
+    bufferSize: 8KiB
+  applicationConnectors:
+    - type: http
+      port: 9000
+
+logging:
+  level: INFO
+  loggers:
+    io.dropwizard: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type: INFO
+  appenders:
+    - type: console
+
+database:
+  driverClass: org.postgresql.Driver
+  user: postgres
+  password: whkc76s6
+  url: jdbc:postgresql://localhost:5432/minios
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate.hbm2ddl.auto: update 
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyApplication Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+
+dropbox:
+  appId: 5fatxds7fdxxsno
+  appSecret: oztzp68tc1d4iv1
+  token: 18a33mnM75AAAAAAAAAAQxiNhspcw985m00EILtH21ENQpPz-mxAcM-7nuUx3Aip
+
+linkedin:
+  appId: 75tj3lhws6zsoh
+  appSecret: sjV0dbnHFlJljpU9
+  url: https://api.9jialu.com/linkedin/callback
+
+github:
+  appId: 30a809580e9ea34121e8
+  appSecret: 10b58b670759de7b02551af8d035c42173f60ace
+  url: https://api.9jialu.com/github/callback
+  
+line:
+  appId: 1498146934
+  appSecret: 5ab842132bfd7299dbbbe490aa76fcbd
+  url: https://api.9jialu.com/line
+  token: 7WTPsQ556BQI5sGMIY7LTmkoFk5FMqPcrhKvs78kdC5FGnbXXydQW/lR2wKdvtC1BK9XOLBZXWlg1RNlL0Vl97nUR26QTCMODhUR32+Upk3e+gPZF4CEsxsAra0I2/+chai1ETV5VpnGTtwWw7FnUAdB04t89/1O/w1cDnyilFU=

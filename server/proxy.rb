@@ -3,8 +3,12 @@ require 'sinatra'
 require 'sinatra/cookies'
 require 'net/http'
 
-set :public_folder, File.dirname(__FILE__) + '/out'
+set :public_folder, File.dirname(__FILE__) + './out'
 set :cookie_options, { domain: 'localhost', path: '/' }
+
+get '/' do 
+	p File.dirname(__FILE__) + './out'
+end
 
 #user
 post '/profile/edit' do
