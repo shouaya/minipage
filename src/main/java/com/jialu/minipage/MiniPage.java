@@ -518,12 +518,17 @@ public class MiniPage {
 		properties.put("mode", row.getCell(30).toString());
 		if (properties.get("type").equals("label")) {
 			return properties.get("value");
+		}else if(properties.get("type").equals("tag")){
+			String tagName = properties.get("name");
+			String tag = "<%s %s ></%s>";
+			return String.format(tag, tagName, properties.get("value"), tagName);
 		}
 		if (properties.get("mode") != "") {
 			String div = "<div hide={ mode=='" + properties.get("mode") + "' }>" + properties.get("value") + "</div>"
 					+ "<div show={ mode=='" + properties.get("mode") + "' }>%s</div>";
 			return String.format(div, getControlHtml(properties));
 		}
+		
 		return getControlHtml(properties);
 	}
 

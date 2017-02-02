@@ -1,4 +1,5 @@
 <message>
+<div class="R C R1 C1"></div><div class="I R1 C1 S3R1C1 F11"><message-info each={ opts.messages } data={this} ></message-info></div>
 <div class="R C R34 C0"></div><div class="I R34 C0 CP F11 TA2 VA1 W20 H1 BT3"><pre>Copyright © 2008-2016 EB</pre></div>
 <div class="R C R34 C1"></div>
 <div class="R C R34 C2"></div>
@@ -29,7 +30,7 @@ $.ajax({
 	contentType : 'application/json',
 	success : function(data, status) {
 		console.log(data);
-		self.messages = data;
+		opts.messages = data;
 		self.update();
 	},
 	error : function(xhr, type) {

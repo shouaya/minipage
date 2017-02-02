@@ -6,7 +6,7 @@ $.ajax({
 	contentType : 'application/json',
 	success : function(data, status) {
 		console.log(data);
-		self.replyMessages = data;
+		opts.replyMessages = data;
 		self.update();
 	},
 	error : function(xhr, type) {
