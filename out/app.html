@@ -20,6 +20,7 @@
             cssEl.innerHTML = 'html{font-size:' + pxPerRem + 'px!important;}';
         }
         setPxPerRem();
+        window.onresize = setPxPerRem;
   </script>
 </head>
 <body>

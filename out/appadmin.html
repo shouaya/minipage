@@ -13,28 +13,45 @@
   <link rel="stylesheet" href="app.css?v=10">
 </head>
 <body>
-  <admin></admin>
-  <user></user>
-  <reply></reply>
-  <message></message>
-  <script type="text/javascript">
-        var cssEl = document.createElement('style');
-        document.documentElement.firstElementChild.appendChild(cssEl);
-        function setPxPerRem(){
-            var dpr = 1;
-            var pxPerRem = document.documentElement.clientWidth * dpr / 20;
-            cssEl.innerHTML = 'html{font-size:' + pxPerRem + 'px!important;}';
-        }
-        setPxPerRem();
-  </script>
-  <script src="admin.html?v=5" type="riot/tag"></script>
-  <script src="user.html?v=5" type="riot/tag"></script>
-  <script src="reply.html?v=5" type="riot/tag"></script>
-  <script src="message.html?v=5" type="riot/tag"></script>
-  <script src="tags.html?v=5" type="riot/tag"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.0.7/riot+compiler.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-  <script>
-  riot.mount('admin', {"name":"admin","role":"admin","userCount":2,"messageCount":60,"replyCount":1,"users":null,"messages":null,"replyMessages":null})
-  </script>
+	<admin></admin>
+	<user></user>
+	<reply></reply>
+	<message></message>
+	<script type="text/javascript">
+		var cssEl = document.createElement('style');
+		document.documentElement.firstElementChild.appendChild(cssEl);
+		function setPxPerRem(){
+			var dpr = 1;
+			var pxPerRem = document.documentElement.clientWidth * dpr / 20;
+			cssEl.innerHTML = 'html{font-size:' + pxPerRem + 'px!important;}';
+		}
+		setPxPerRem();
+		window.onresize = setPxPerRem;
+	</script>
+	<script src="admin.html?v=12" type="riot/tag"></script>
+	<script src="user.html?v=12" type="riot/tag"></script>
+	<script src="reply.html?v=12" type="riot/tag"></script>
+	<script src="message.html?v=12" type="riot/tag"></script>
+	<script src="tags.html?v=13" type="riot/tag"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.0.7/riot+compiler.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+	<script>
+	riot.mount('admin', {"name":"admin","role":"admin","userCount":2,"messageCount":60,"replyCount":1,"users":null,"messages":null,"replyMessages":null})
+	function returnHome(){
+		var opts = window.page[0].opts;
+		window.page[0].unmount(true);
+		riot.mount('admin', opts);
+	}
+	</script>
+	 <div class="weui-msg__extra-area">
+            <div class="weui-footer">
+                <p class="weui-footer__links">
+                    <a href="javascript:returnHome();" class="weui-footer__link">MyLINE管理</a>
+                </p>
+                <p class="weui-footer__text">Copyright &copy; 2008-2016 CVonLine</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 </html>

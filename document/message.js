@@ -13,10 +13,3 @@ $.ajax({
 		alert('error!')
 	}
 });
-redirect(page)
-{
-	return function(e) {
-		self.unmount(true);
-		riot.mount(page, opts);
-	}
-}

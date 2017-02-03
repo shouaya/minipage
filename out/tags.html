@@ -1,22 +1,13 @@
 <user-info>
-<div class="weui-panel__bd">
+<div class="weui-panel__bd" onclick="{edit}">
 	<a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
 		<div class="weui-media-box__hd">
 			<img class="weui-media-box__thumb" src="{this.opts.data.pictureUrl}" alt="">
 		</div>
-		<div class="weui-media-box__bd">
-			<h4 class="weui-media-box__title">{this.opts.data.displayName}</h4>
-			<p class="weui-media-box__desc">{this.opts.data.statusMessage}</p>
-		</div>
+		{this.opts.data.displayName}|{this.opts.data.statusMessage}
 	</a>
 </div>
-<div class="weui-panel__ft" onclick="{edit}">
-	<a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
-		<div class="weui-cell__bd">参照</div>
-		<span class="weui-cell__ft"></span>
-	</a>    
-</div>
-<user-detail show={this.showDetail}>
+<user-detail show={this.showDetail}　data={this.opts.data}>
 </user-detail>
 <script>
 this.showDetail=false;
@@ -29,24 +20,15 @@ edit(e)
 </user-info>
 
 <reply-info>
-<div class="weui-panel__bd">
-	<div class="weui-media-box weui-media-box_text">
-		<h4 class="weui-media-box__title">{this.opts.data.rule}</h4>
-		<p class="weui-media-box__desc">{this.opts.data.message}</p>
-		<ul class="weui-media-box__info">
-			<li class="weui-media-box__info__meta">{this.opts.data.type}</li>
-			<li class="weui-media-box__info__meta">{this.opts.data.level}</li>
-			<li class="weui-media-box__info__meta weui-media-box__info__meta_extra">{this.opts.data.business}</li>
-		</ul>
-	</div>
-</div>
+{this.opts.data.rule}-{this.opts.data.type}-{this.opts.data.level}-{this.opts.data.business}
+<br/>{this.opts.data.message}
 <div class="weui-panel__ft" onclick="{edit}">
 	<a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
 		<div class="weui-cell__bd">変更</div>
 		<span class="weui-cell__ft"></span>
-	</a>    
+	</a>
 </div>
-<reply-detail show={this.showDetail}>
+<reply-detail show={this.showDetail} data={this.opts.data}>
 </reply-detail>
 <script>
 this.showDetail=false;
@@ -60,7 +42,9 @@ edit(e)
 
 
 <message-info>
-<div class="weui-panel__hd">{this.postTime}|{this.opts.data.type}|{this.opts.data.text}|<a href="{this.opts.data.sourceId}">user</a></div>
+{this.postTime}-{this.opts.data.type}
+<br/>{this.opts.data.text}
+<hr/>
 <script>
 this.on('mount', function(){
     var date = new Date(this.opts.data.postTime);
@@ -77,37 +61,56 @@ this.on('mount', function(){
 	<div class="weui-dialog">
 		<div class="weui-dialog__bd">
 			<div class="weui-form-preview">
-				<div class="weui-form-preview__hd">
-					<div class="weui-form-preview__item">
-						<label class="weui-form-preview__label">付款金额</label>
-						<em class="weui-form-preview__value">¥2400.00</em>
-					</div>
-				</div>
 				<div class="weui-form-preview__bd">
-					<div class="weui-form-preview__item">
-						<label class="weui-form-preview__label">商品</label>
-						<span class="weui-form-preview__value">电动打蛋机</span>
-					</div>
-					<div class="weui-form-preview__item">
-						<label class="weui-form-preview__label">标题标题</label>
-						<span class="weui-form-preview__value">名字名字名字</span>
-					</div>
-					<div class="weui-form-preview__item">
-						<label class="weui-form-preview__label">标题标题</label>
-						<span class="weui-form-preview__value">很长很长的名字很长很长的名字很长很长的名字很长很长的名字很长很长的名字</span>
-					</div>
-				</div>
-				<div class="weui-form-preview__ft">
-					<a class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:">操作</a>
+					ルール：<input id="rule" class="weui-input" type="text" value="{this.opts.data.rule}" />
+				<hr/>
+					種類：<input id="type" class="weui-input" type="text" value="{this.opts.data.type}" />
+				<hr/>
+					レベル：<input id="level" class="weui-input" type="text" value="{this.opts.data.level}" />
+				<hr/>
+					事件:<input id="business" class="weui-input" type="text" value="{this.opts.data.business}" />
+				<hr/>
+					中身:<input id="message" class="weui-input" type="text" value="{this.opts.data.message}" />
 				</div>
 			</div>
 		</div>
-		<div class="weui-dialog__ft" onclick="{colse}">
-			<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+		<div class="weui-dialog__ft" >
+		    <a href="javascript:void(0);" onclick="{edit('update')}" class="weui-dialog__btn weui-dialog__btn_primary">更新</a>
+			<a href="javascript:void(0);" onclick="{edit('create')}" class="weui-dialog__btn weui-dialog__btn_primary">追加</a>
+			<a href="javascript:void(0);" onclick="{colse}" class="weui-dialog__btn weui-dialog__btn_primary">閉じる</a>
 		</div>
 	</div>
 </div>
 <script>
+var self = this;
+edit(mode)
+{
+	return function(e) {
+		var postData = {};
+		if(mode =="update"){
+			postData.id = this.opts.data.id;
+		}
+		postData.rule = document.getElementById('rule').value;
+		postData.type = document.getElementById('type').value;
+		postData.level = document.getElementById('level').value;
+		postData.business = document.getElementById('business').value;
+		postData.message = document.getElementById('message').value;
+		$.ajax({
+			url : '/line/reply',
+			type : 'POST',
+			dataType:"json",
+			contentType : 'application/json',
+			data : JSON.stringify(postData),
+			success : function(data, status) {
+				self.parent.showDetail = false;
+				self.parent.parent.refresh();
+			},
+			error : function(xhr, type) {
+				alert('error!')
+			}
+		});
+	}
+}
 colse(e)
 {
 	this.parent.showDetail = false;
@@ -148,7 +151,7 @@ colse(e)
 			</div>
 		</div>
 		<div class="weui-dialog__ft" onclick="{colse}">
-			<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+			<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">閉じる</a>
 		</div>
 	</div>
 </div>

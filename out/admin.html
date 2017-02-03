@@ -13,17 +13,17 @@
 <div class="R C R8 C3"></div>
 <div class="R C R8 C4"></div><div class="I R8 C4 W16 F11 TA2 VA1 W16 H1 BT4"><pre></pre></div>
 <div class="R C R9 C3"></div>
-<div class="R C R9 C6"></div><div class="I R9 C6 F11 TA2 VA1 W13 H3 BL3 BT3 BR3 BB3"><input onclick="{redirect('user')}" name="in5" id="in5" type="button" value="ユーザー{ opts.userCount }" class="W10 H2 weui-dialog__btn weui-dialog__btn_primary"  /></div>
+<div class="R C R9 C6"></div><div class="I R9 C6 F11 TA2 VA1 W13 H3 BL3 BT3 BR3 BB3"><input onclick="{redirect('user')}" name="in5" id="in5" type="button" value="ユーザー{ opts.userCount }" class="W10 H2"  /></div>
 <div class="R C R10 C3"></div>
 <div class="R C R11 C3"></div>
 <div class="R C R12 C3"></div>
 <div class="R C R13 C3"></div>
-<div class="R C R13 C6"></div><div class="I R13 C6 F11 TA2 VA1 W13 H3 BL3 BT3 BR3 BB3"><input onclick="{redirect('message')}" name="in6" id="in6" type="button" value="メーセージ{ opts.messageCount }" class="W10 H2 weui-dialog__btn weui-dialog__btn_primary"  /></div>
+<div class="R C R13 C6"></div><div class="I R13 C6 F11 TA2 VA1 W13 H3 BL3 BT3 BR3 BB3"><input onclick="{redirect('message')}" name="in6" id="in6" type="button" value="メーセージ{ opts.messageCount }" class="W10 H2"  /></div>
 <div class="R C R14 C3"></div>
 <div class="R C R15 C3"></div>
 <div class="R C R16 C3"></div>
 <div class="R C R17 C3"></div>
-<div class="R C R17 C6"></div><div class="I R17 C6 F11 TA2 VA1 W13 H3 BL3 BT3 BR3 BB3"><input onclick="{redirect('reply')}" name="in7" id="in7" type="button" value="応答{ opts.replyCount }" class="W10 H2 weui-dialog__btn weui-dialog__btn_primary"  /></div>
+<div class="R C R17 C6"></div><div class="I R17 C6 F11 TA2 VA1 W13 H3 BL3 BT3 BR3 BB3"><input onclick="{redirect('reply')}" name="in7" id="in7" type="button" value="応答{ opts.replyCount }" class="W10 H2"  /></div>
 <div class="R C R18 C3"></div>
 <div class="R C R19 C3"></div>
 <div class="R C R20 C3"></div>
@@ -41,26 +41,7 @@
 <div class="R C R31 C5"></div><div class="I R31 C5 IB F13 TA2 VA0 W14 H1"><pre>XXXXXXX</pre></div>
 <div class="R C R32 C3"></div>
 <div class="R C R33 C3"></div>
-<div class="R C R34 C0"></div><div class="I R34 C0 CP F11 TA2 VA1 W20 H1 BT3"><pre>Copyright © 2008-2016 EB</pre></div>
-<div class="R C R34 C1"></div>
-<div class="R C R34 C2"></div>
-<div class="R C R34 C3"></div>
-<div class="R C R34 C4"></div>
-<div class="R C R34 C5"></div>
-<div class="R C R34 C6"></div>
-<div class="R C R34 C7"></div>
-<div class="R C R34 C8"></div>
-<div class="R C R34 C9"></div>
-<div class="R C R34 C10"></div>
-<div class="R C R34 C11"></div>
-<div class="R C R34 C12"></div>
-<div class="R C R34 C13"></div>
-<div class="R C R34 C14"></div>
-<div class="R C R34 C15"></div>
-<div class="R C R34 C16"></div>
-<div class="R C R34 C17"></div>
-<div class="R C R34 C18"></div>
-<div class="R C R34 C19"></div>
+<div class="R C R34 C3"></div><div class="I R34 C3 S0R34C3 S0R6C5 F11"><pre></pre></div>
 
 <script>
 var self = this;
@@ -68,7 +49,7 @@ redirect(page)
 {
 	return function(e) {
 		self.unmount(true);
-		riot.mount(page, opts);
+		window.page = riot.mount(page, opts);
 	}
 }
 </script>

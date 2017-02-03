@@ -79,4 +79,16 @@ get '/line/reply' do
   end
 end
 
-
+post '/line/reply' do
+  content_type :json
+  uri = URI('http://localhost:9000/line/reply')
+  req = Net::HTTP::Post.new(uri)
+  #req.basic_auth 'matt', 'secret'
+  req["Content-Type"] = 'application/json'
+  req.basic_auth 'admin', 'admin'
+  req.body = request.body.read
+  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    resp = http.request(req)
+	p resp.body
+  end
+end
