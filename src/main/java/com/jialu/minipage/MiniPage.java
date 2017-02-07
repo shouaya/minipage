@@ -428,7 +428,7 @@ public class MiniPage {
 		mc.setInner(getMiniInner(cell, body));
 		switch (cell.getCellType()) {
 		case HSSFCell.CELL_TYPE_FORMULA:
-			mc.setContent(getControlByCell(cell));
+			mc.setContent(getControlByCell(cell, mc));
 			break;
 		default:
 			cell.setCellType(Cell.CELL_TYPE_STRING);
@@ -503,9 +503,10 @@ public class MiniPage {
 
 	/**
 	 * @param cell
+	 * @param mc 
 	 * @return
 	 */
-	private static String getControlByCell(XSSFCell cell) {
+	private static String getControlByCell(XSSFCell cell, MiniCell mc) {
 		CellReference ref = new CellReference(cell.getCellFormula());
 		XSSFRow row = cell.getSheet().getRow(ref.getRow());
 		HashMap<String, String> properties = new HashMap<String, String>();
@@ -521,7 +522,8 @@ public class MiniPage {
 		}else if(properties.get("type").equals("tag")){
 			String tagName = properties.get("name");
 			String tag = "<%s %s ></%s>";
-			return String.format(tag, tagName, properties.get("value"), tagName);
+			String html = String.format(tag, tagName, properties.get("value"), tagName);
+			return html;
 		}
 		if (properties.get("mode") != "") {
 			String div = "<div hide={ mode=='" + properties.get("mode") + "' }>" + properties.get("value") + "</div>"

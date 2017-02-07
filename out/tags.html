@@ -21,7 +21,7 @@ edit(e)
 
 <reply-info>
 {this.opts.data.rule}-{this.opts.data.type}-{this.opts.data.level}-{this.opts.data.business}
-<br/>{this.opts.data.message}
+<br/>{this.displayMessage}
 <div class="weui-panel__ft" onclick="{edit}">
 	<a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
 		<div class="weui-cell__bd">変更</div>
@@ -37,18 +37,28 @@ edit(e)
 	this.showDetail=true;
 	this.update();
 }
+this.on('mount', function(){
+    var date = new Date(this.opts.data.postTime);
+	if(this.opts.data.message){
+		this.displayMessage = this.opts.data.message.substring(0,20);
+	}
+	this.update();
+});
 </script>
 </reply-info>
 
 
 <message-info>
 {this.postTime}-{this.opts.data.type}
-<br/>{this.opts.data.text}
+<br/>{this.text}
 <hr/>
 <script>
 this.on('mount', function(){
     var date = new Date(this.opts.data.postTime);
     this.postTime = date.toLocaleString();
+	if(this.opts.data.text){
+		this.text = this.opts.data.text.substring(0,10);
+	}
 	this.update();
 });
 </script>
@@ -76,7 +86,6 @@ this.on('mount', function(){
 		</div>
 		<div class="weui-dialog__ft" >
 		    <a href="javascript:void(0);" onclick="{edit('update')}" class="weui-dialog__btn weui-dialog__btn_primary">更新</a>
-			<a href="javascript:void(0);" onclick="{edit('create')}" class="weui-dialog__btn weui-dialog__btn_primary">追加</a>
 			<a href="javascript:void(0);" onclick="{colse}" class="weui-dialog__btn weui-dialog__btn_primary">閉じる</a>
 		</div>
 	</div>
@@ -87,14 +96,13 @@ edit(mode)
 {
 	return function(e) {
 		var postData = {};
-		if(mode =="update"){
-			postData.id = this.opts.data.id;
-		}
+		postData.id = this.opts.data.id;
 		postData.rule = document.getElementById('rule').value;
 		postData.type = document.getElementById('type').value;
 		postData.level = document.getElementById('level').value;
 		postData.business = document.getElementById('business').value;
 		postData.message = document.getElementById('message').value;
+		postData.deleted = 0;
 		$.ajax({
 			url : '/line/reply',
 			type : 'POST',
@@ -104,6 +112,10 @@ edit(mode)
 			success : function(data, status) {
 				self.parent.showDetail = false;
 				self.parent.parent.refresh();
+				$('#loadingToast').fadeIn(100);
+				setTimeout(function () {
+					$('#loadingToast').fadeOut(100);
+				}, 2000);
 			},
 			error : function(xhr, type) {
 				alert('error!')
@@ -120,41 +132,7 @@ colse(e)
 </reply-detail>
 
 <user-detail>
-<div class="js_dialog" id="iosDialog2">
-	<div class="weui-mask"></div>
-	<div class="weui-dialog">
-		<div class="weui-dialog__bd">
-			<div class="weui-form-preview">
-				<div class="weui-form-preview__hd">
-					<div class="weui-form-preview__item">
-						<label class="weui-form-preview__label">付款金额</label>
-						<em class="weui-form-preview__value">¥2400.00</em>
-					</div>
-				</div>
-				<div class="weui-form-preview__bd">
-					<div class="weui-form-preview__item">
-						<label class="weui-form-preview__label">商品</label>
-						<span class="weui-form-preview__value">电动打蛋机</span>
-					</div>
-					<div class="weui-form-preview__item">
-						<label class="weui-form-preview__label">标题标题</label>
-						<span class="weui-form-preview__value">名字名字名字</span>
-					</div>
-					<div class="weui-form-preview__item">
-						<label class="weui-form-preview__label">标题标题</label>
-						<span class="weui-form-preview__value">很长很长的名字很长很长的名字很长很长的名字很长很长的名字很长很长的名字</span>
-					</div>
-				</div>
-				<div class="weui-form-preview__ft">
-					<a class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:">操作</a>
-				</div>
-			</div>
-		</div>
-		<div class="weui-dialog__ft" onclick="{colse}">
-			<a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">閉じる</a>
-		</div>
-	</div>
-</div>
+
 <script>
 colse(e)
 {
@@ -163,3 +141,32 @@ colse(e)
 }
 </script>
 </user-detail>
+<pagination>
+<div class="page">
+    <div class="page__bd" style="height: 100%;">
+        <div class="weui-tab">
+            <div class="weui-navbar">
+                <div if={ this.parent.page > 1 } class="weui-navbar__item" onclick={last}>
+                    <<<<<
+                </div>
+                <div class="weui-navbar__item" onclick={this.parent.refresh}>
+                    Page {this.parent.page}
+                </div>
+                <div if={ this.parent.page*opts.size < opts.total } class="weui-navbar__item" onclick={next}>
+                    >>>>>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+last(e){
+	this.parent.page = this.parent.page - 1;
+	this.parent.refresh();
+}
+next(e){
+	this.parent.page = this.parent.page + 1;
+	this.parent.refresh();
+}
+</script>
+</pagination>

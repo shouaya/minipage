@@ -1,14 +1,17 @@
 <reply>
-<div class="R C R1 C1"></div><div class="I R1 C1 S2R1C1 F11"><reply-info each={ opts.replyMessages } data={this} ></reply-info></div>
+<div class="R C R0 C0"></div><div class="I R0 C0 S2R0C0 F11"><pagination total={opts.replyCount} size=5  ></pagination></div>
+<div class="R C R3 C1"></div><div class="I R3 C1 S2R0C0 F11"><reply-info each={ opts.replyMessages } data={this} ></reply-info></div>
 
 <script>
 var self = this;
+this.page = 1;
 this.on('mount', function(){
     this.refresh();
 });
 refresh(e){
+	$('#loadingToast').fadeIn(100);
 	$.ajax({
-		url : '/line/reply?limit=10&offset=0',
+		url : '/line/reply?limit=5&offset=' + (this.page-1)*5,
 		type : 'GET',
 		dataType:"json",
 		contentType : 'application/json',
@@ -16,6 +19,9 @@ refresh(e){
 			console.log(data);
 			opts.replyMessages = data;
 			self.update();
+		},
+		complete : function(xhr, status){
+			$('#loadingToast').fadeOut(100);
 		},
 		error : function(xhr, type) {
 			alert('error!')

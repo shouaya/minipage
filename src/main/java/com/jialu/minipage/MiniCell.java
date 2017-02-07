@@ -59,7 +59,7 @@ public class MiniCell {
 				this.content = String.format("<div class=\"%s\">%s</div>",
 						StringUtils.join(this.inner.getClasses(), " "), content);
 			} else {
-				this.content = String.format("<div><pre>%s</pre></div>", content);
+				this.content = String.format("<div>%s</div>", content);
 			}
 		}
 		if (this.classes.size() > 0) {
