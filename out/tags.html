@@ -220,34 +220,30 @@ toJson()
 </script>
 </reply-template>
 <reply-base>
-<div class="weui-form-preview__item">
-	<div class="weui-cells__title">条件</div>
-	<div class="weui-cells">
-		<div class="weui-cell">
-			<div class="weui-cell__bd">
-				<input id="reply-base-rule" class="weui-input" type="text" placeholder="business" value="{opts.data.rule}"/>
-			</div>
-		</div>
+<div class="weui-flex">
+	<div class="weui-flex__item">
+		<input id="reply-base-rule" class="weui-input" type="text" value="{opts.data.rule}"/>
+	</div>
+	<div class="ui left pointing label">
+	  条件
 	</div>
 </div>
-<div class="weui-form-preview__item">
-	<div class="weui-cells__title">後処理</div>
-	<div class="weui-cells">
-		<div class="weui-cell">
-			<div class="weui-cell__bd">
-				<input id="reply-base-business" class="weui-input" type="text" placeholder="business" value="{opts.data.business}"/>
-			</div>
-		</div>
+<hr/>
+<div class="weui-flex">
+	<div class="weui-flex__item">
+		<input id="reply-base-business" class="weui-input" type="text" value="{opts.data.business}"/>
+	</div>
+	<div class="ui left pointing label">
+	  後処理
 	</div>
 </div>
-<div class="weui-form-preview__item">
-	<div class="weui-cells__title">レベル</div>
-	<div class="weui-cells">
-		<div class="weui-cell">
-			<div class="weui-cell__bd">
-				<input id="reply-base-level" class="weui-input" type="text" placeholder="business" value="{opts.data.level}"/>
-			</div>
-		</div>
+<hr/>
+<div class="weui-flex">
+	<div class="weui-flex__item">
+		<input id="reply-base-level" class="weui-input" type="text" value="{opts.data.level}"/>
+	</div>
+	<div class="ui left pointing label">
+	  レベル
 	</div>
 </div>
 </reply-base>
