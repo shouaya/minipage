@@ -1,5 +1,5 @@
 <message>
-<div class="R C R0 C0"></div><div class="I R0 C0 S3R0C0 F11"><pagination total={ opts.messageCount } size=10 ></pagination></div>
+<pagination total={ opts.messageCount } size=10 ></pagination>
 <div class="R C R3 C1"></div><div class="I R3 C1 S3R0C0 F11"><message-info each={ opts.messages } data={this} ></message-info></div>
 
 <script>
@@ -30,3 +30,19 @@ refresh(e){
 }
 </script>
 </message>
+
+<message-info>
+{this.postTime}-{this.opts.data.type}
+<br/>{this.text}
+<hr/>
+<script>
+this.on('mount', function(){
+    var date = new Date(this.opts.data.postTime);
+    this.postTime = date.toLocaleString();
+	if(this.opts.data.text){
+		this.text = this.opts.data.text.substring(0,10);
+	}
+	this.update();
+});
+</script>
+</message-info>

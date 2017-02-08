@@ -1,9 +1,12 @@
 <reply>
-<div class="R C R0 C0"></div><div class="I R0 C0 S2R0C0 F11"><pagination total={opts.replyCount} size=5  ></pagination></div>
-<div class="R C R3 C1"></div><div class="I R3 C1 S2R0C0 F11"><reply-info each={ opts.replyMessages } data={this} ></reply-info></div>
-
+<pagination show={!this.showDetail} total={opts.replyCount} size=5  ></pagination>
+<div show={!this.showDetail} class="I R3 C1 S2R0C0 F11"><reply-info each={ opts.replyMessages } data={this} ></reply-info></div>
+<back show={this.showDetail} goback={goback} title="戻る"  ></back>
+<br/>
+<div show={this.showDetail} class="R4" id="reply-info"></div>
 <script>
 var self = this;
+this.showDetail=false;
 this.page = 1;
 this.on('mount', function(){
     this.refresh();
@@ -28,5 +31,67 @@ refresh(e){
 		}
 	});
 }
+goback(){
+	this.showDetail = !this.showDetail;
+	this.update();
+}
+save(item)
+{
+	$.ajax({
+		url : '/line/reply',
+		type : 'POST',
+		dataType:"json",
+		contentType : 'application/json',
+		data : JSON.stringify(item),
+		success : function(data, status) {
+			self.showDetail = false;
+			self.refresh();
+			$('#loadingToast').fadeIn(100);
+			setTimeout(function () {
+				$('#loadingToast').fadeOut(100);
+			}, 2000);
+		},
+		error : function(xhr, type) {
+			alert('error!')
+		}
+	});
+}
 </script>
 </reply>
+
+<reply-info>
+<div class="ui label" onclick="{edit}">
+  <i if={this.opts.data.type=='text'} class="content icon"></i>
+  <i if={this.opts.data.type=='image'} class="image icon"></i>
+  <i if={this.opts.data.type=='video'} class="file video outline icon"></i>
+  <i if={this.opts.data.type=='audio'} class="file audio outline icon"></i>
+  <i if={this.opts.data.type=='location'} class="marker icon"></i>
+  <i if={this.opts.data.type=='sticker'} class="smile icon"></i>
+  <i if={this.opts.data.type=='imagemap'} class="map icon"></i>
+  <i if={this.opts.data.type=='template'} class="newspaper icon"></i>
+  {this.opts.data.level}
+  <a class="detail">{this.opts.data.rule}</a>
+</div>
+<div class="weui-panel__ft" onclick="{edit}">
+	<a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
+		<div class="weui-cell__bd">変更</div>
+		<span class="weui-cell__ft"></span>
+	</a>
+</div>
+<script>
+this.on('mount', function(){
+    var date = new Date(this.opts.data.postTime);
+	if(this.opts.data.message){
+		this.displayMessage = this.opts.data.message.substring(0,20);
+	}
+	this.update();
+});
+edit(e)
+{
+	this.parent.showDetail = true;
+	this.opts.save = this.parent.save;
+	riot.mount("#reply-info", "reply-" + this.opts.data.type, this.opts);
+	this.parent.update();
+}
+</script>
+</reply-info>

@@ -1,146 +1,3 @@
-<user-info>
-<div class="weui-panel__bd" onclick="{edit}">
-	<a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
-		<div class="weui-media-box__hd">
-			<img class="weui-media-box__thumb" src="{this.opts.data.pictureUrl}" alt="">
-		</div>
-		{this.opts.data.displayName}|{this.opts.data.statusMessage}
-	</a>
-</div>
-<user-detail show={this.showDetail}　data={this.opts.data}>
-</user-detail>
-<script>
-this.showDetail=false;
-edit(e)
-{
-	this.showDetail=true;
-	this.update();
-}
-</script>
-</user-info>
-
-<reply-info>
-{this.opts.data.rule}-{this.opts.data.type}-{this.opts.data.level}-{this.opts.data.business}
-<br/>{this.displayMessage}
-<div class="weui-panel__ft" onclick="{edit}">
-	<a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
-		<div class="weui-cell__bd">変更</div>
-		<span class="weui-cell__ft"></span>
-	</a>
-</div>
-<reply-detail show={this.showDetail} data={this.opts.data}>
-</reply-detail>
-<script>
-this.showDetail=false;
-edit(e)
-{
-	this.showDetail=true;
-	this.update();
-}
-this.on('mount', function(){
-    var date = new Date(this.opts.data.postTime);
-	if(this.opts.data.message){
-		this.displayMessage = this.opts.data.message.substring(0,20);
-	}
-	this.update();
-});
-</script>
-</reply-info>
-
-
-<message-info>
-{this.postTime}-{this.opts.data.type}
-<br/>{this.text}
-<hr/>
-<script>
-this.on('mount', function(){
-    var date = new Date(this.opts.data.postTime);
-    this.postTime = date.toLocaleString();
-	if(this.opts.data.text){
-		this.text = this.opts.data.text.substring(0,10);
-	}
-	this.update();
-});
-</script>
-</message-info>
-
-
-<reply-detail>
-<div class="js_dialog" id="iosDialog2">
-	<div class="weui-mask"></div>
-	<div class="weui-dialog">
-		<div class="weui-dialog__bd">
-			<div class="weui-form-preview">
-				<div class="weui-form-preview__bd">
-					ルール：<input id="rule" class="weui-input" type="text" value="{this.opts.data.rule}" />
-				<hr/>
-					種類：<input id="type" class="weui-input" type="text" value="{this.opts.data.type}" />
-				<hr/>
-					レベル：<input id="level" class="weui-input" type="text" value="{this.opts.data.level}" />
-				<hr/>
-					事件:<input id="business" class="weui-input" type="text" value="{this.opts.data.business}" />
-				<hr/>
-					中身:<input id="message" class="weui-input" type="text" value="{this.opts.data.message}" />
-				</div>
-			</div>
-		</div>
-		<div class="weui-dialog__ft" >
-		    <a href="javascript:void(0);" onclick="{edit('update')}" class="weui-dialog__btn weui-dialog__btn_primary">更新</a>
-			<a href="javascript:void(0);" onclick="{colse}" class="weui-dialog__btn weui-dialog__btn_primary">閉じる</a>
-		</div>
-	</div>
-</div>
-<script>
-var self = this;
-edit(mode)
-{
-	return function(e) {
-		var postData = {};
-		postData.id = this.opts.data.id;
-		postData.rule = document.getElementById('rule').value;
-		postData.type = document.getElementById('type').value;
-		postData.level = document.getElementById('level').value;
-		postData.business = document.getElementById('business').value;
-		postData.message = document.getElementById('message').value;
-		postData.deleted = 0;
-		$.ajax({
-			url : '/line/reply',
-			type : 'POST',
-			dataType:"json",
-			contentType : 'application/json',
-			data : JSON.stringify(postData),
-			success : function(data, status) {
-				self.parent.showDetail = false;
-				self.parent.parent.refresh();
-				$('#loadingToast').fadeIn(100);
-				setTimeout(function () {
-					$('#loadingToast').fadeOut(100);
-				}, 2000);
-			},
-			error : function(xhr, type) {
-				alert('error!')
-			}
-		});
-	}
-}
-colse(e)
-{
-	this.parent.showDetail = false;
-	this.parent.update();
-}
-</script>
-</reply-detail>
-
-<user-detail>
-
-<script>
-colse(e)
-{
-	this.parent.showDetail = false;
-	this.parent.update();
-}
-</script>
-</user-detail>
 <pagination>
 <div class="page">
     <div class="page__bd" style="height: 100%;">
@@ -150,7 +7,7 @@ colse(e)
                     <<<<<
                 </div>
                 <div class="weui-navbar__item" onclick={this.parent.refresh}>
-                    Page {this.parent.page}
+                    ページ {this.parent.page}
                 </div>
                 <div if={ this.parent.page*opts.size < opts.total } class="weui-navbar__item" onclick={next}>
                     >>>>>
@@ -170,3 +27,227 @@ next(e){
 }
 </script>
 </pagination>
+
+<back>
+<div class="page">
+    <div class="page__bd" style="height: 100%;">
+        <div class="weui-tab">
+            <div class="weui-navbar">
+                <div class="weui-navbar__item" onclick={opts.goback}>
+                    {opts.title}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</back>
+
+<reply-text>
+<div class="page__bd">
+	<div class="weui-form-preview">
+		<div class="weui-form-preview__bd">
+			<div class="weui-form-preview__item">
+			</div>
+			<div class="weui-form-preview__item">
+				<div class="weui-cells weui-cells_form">
+					<div class="weui-cell">
+						<div class="weui-cell__bd" >
+							<textarea id="reply-text-content" onkeyup={resize} class="weui-textarea" placeholder="メッセージのテキスト2000文字以内" rows="8">{this.data.text}</textarea>
+							<div class="weui-textarea-counter"><span>{size}</span>/2000</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<reply-base data={this.item}>
+			</reply-base>
+		</div>
+		<div class="weui-form-preview__ft" onclick={edit}>
+			<a class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:">保存</a>
+		</div>
+	</div>
+</div>
+<script>
+var self = this;
+this.item = {};
+this.dataArr = [];
+this.data = {};
+this.size = 0;
+this.on('mount', function(){
+	this.item.id = opts.data.id;
+	this.item.message = opts.data.message;
+	this.item.type = opts.data.type;
+	this.item.business = opts.data.business;
+	this.item.level = opts.data.level;
+	this.item.rule = opts.data.rule;
+	this.item.deleted = opts.data.deleted;
+	this.dataArr = JSON.parse(this.item.message);
+	this.data = this.dataArr[0];
+	this.size = this.data.text.length;
+    this.update();
+});
+resize(e){
+	this.size = $('#reply-text-content').val().length;
+	this.data.text = $('#reply-text-content').val();
+	this.update();
+}
+edit(e){
+	this.item.message = JSON.stringify(this.dataArr);
+	this.item.business = $('#reply-base-business').val()
+	this.item.level = $('#reply-base-level').val()
+	this.item.rule = $('#reply-base-rule').val()
+	this.opts.save(this.item);
+}
+</script>
+</reply-text>
+<reply-image>
+<div class="page__bd">
+	<article class="weui-article">
+		<img src="{this.data.previewImageUrl}">
+		<div class="weui-uploader">
+			<div class="weui-uploader__bd">
+				<div class="weui-uploader__input-box">
+					<input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple />
+				</div>
+			</div>
+		</div>
+	</article>
+	<div class="weui-form-preview">
+		<div class="weui-form-preview__bd">
+			<div class="weui-form-preview__item">
+			</div>
+			<reply-base data={this.item}>
+			</reply-base>
+		</div>
+		<div class="weui-form-preview__ft" onclick={edit}>
+			<a class="weui-form-preview__btn weui-form-preview__btn_primary" href="javascript:">保存</a>
+		</div>
+	</div>
+</div>
+<script>
+var self = this;
+this.item = {};
+this.dataArr = [];
+this.data = {};
+this.showB = false;
+this.on('mount', function(){
+	this.item.id = opts.data.id;
+	this.item.message = opts.data.message;
+	this.item.type = opts.data.type;
+	this.item.business = opts.data.business;
+	this.item.level = opts.data.level;
+	this.item.rule = opts.data.rule;
+	this.item.deleted = opts.data.deleted;
+	this.dataArr = JSON.parse(this.item.message);
+	this.data = this.dataArr[0];
+    this.update();
+});
+edit(e){
+	this.item.message = JSON.stringify(this.dataArr);
+	this.item.business = $('#reply-base-business').val()
+	this.item.level = $('#reply-base-level').val()
+	this.item.rule = $('#reply-base-rule').val()
+	this.opts.save(this.item);
+}
+showBig(e){
+	this.showB = true;
+	console.log(this);
+	this.update();
+}
+</script>
+</reply-image>
+<reply-video>
+<a>{opts.message}</a>
+<script>
+toJson()
+{
+	return function(e) {
+		return JSON.stringify(this);
+	}
+}
+</script>
+</reply-video>
+<reply-audio>
+<a>{opts.message}</a>
+<script>
+toJson()
+{
+
+}
+</script>
+</reply-audio>
+<reply-location>
+<a>{opts.message}</a>
+<script>
+toJson()
+{
+	return function(e) {
+		return JSON.stringify(this);
+	}
+}
+</script>
+</reply-location>
+<reply-sticker>
+<a>{opts.message}</a>
+<script>
+toJson()
+{
+	return function(e) {
+		return JSON.stringify(this);
+	}
+}
+</script>
+</reply-sticker>
+<reply-imagemap>
+<a>{opts.message}</a>
+<script>
+toJson()
+{
+	return function(e) {
+		return JSON.stringify(this);
+	}
+}
+</script>
+</reply-imagemap>
+<reply-template>
+<a>{opts.message}</a>
+<script>
+toJson()
+{
+	return function(e) {
+		return JSON.stringify(this);
+	}
+}
+</script>
+</reply-template>
+<reply-base>
+<div class="weui-form-preview__item">
+	<div class="weui-cells__title">条件</div>
+	<div class="weui-cells">
+		<div class="weui-cell">
+			<div class="weui-cell__bd">
+				<input id="reply-base-rule" class="weui-input" type="text" placeholder="business" value="{opts.data.rule}"/>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="weui-form-preview__item">
+	<div class="weui-cells__title">後処理</div>
+	<div class="weui-cells">
+		<div class="weui-cell">
+			<div class="weui-cell__bd">
+				<input id="reply-base-business" class="weui-input" type="text" placeholder="business" value="{opts.data.business}"/>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="weui-form-preview__item">
+	<div class="weui-cells__title">レベル</div>
+	<div class="weui-cells">
+		<div class="weui-cell">
+			<div class="weui-cell__bd">
+				<input id="reply-base-level" class="weui-input" type="text" placeholder="business" value="{opts.data.level}"/>
+			</div>
+		</div>
+	</div>
+</div>
+</reply-base>
