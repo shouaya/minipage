@@ -12,23 +12,10 @@ this.on('mount', function(){
     this.refresh();
 });
 refresh(e){
-	$('#loadingToast').fadeIn(100);
-	$.ajax({
-		url : '/line/reply?limit=5&offset=' + (this.page-1)*5,
-		type : 'GET',
-		dataType:"json",
-		contentType : 'application/json',
-		success : function(data, status) {
-			console.log(data);
-			opts.replyMessages = data;
-			self.update();
-		},
-		complete : function(xhr, status){
-			$('#loadingToast').fadeOut(100);
-		},
-		error : function(xhr, type) {
-			alert('error!')
-		}
+	var url = '/line/reply?limit=5&offset=' + (this.page-1)*5;
+	ajaxget(url, function(data, status){
+		opts.replyMessages = data;
+		self.update();
 	});
 }
 goback(){
@@ -37,23 +24,9 @@ goback(){
 }
 save(item)
 {
-	$.ajax({
-		url : '/line/reply',
-		type : 'POST',
-		dataType:"json",
-		contentType : 'application/json',
-		data : JSON.stringify(item),
-		success : function(data, status) {
-			self.showDetail = false;
-			self.refresh();
-			$('#loadingToast').fadeIn(100);
-			setTimeout(function () {
-				$('#loadingToast').fadeOut(100);
-			}, 2000);
-		},
-		error : function(xhr, type) {
-			alert('error!')
-		}
+	ajaxpost('/line/reply', item, function(data, status){
+		self.showDetail = false;
+		self.refresh();
 	});
 }
 </script>

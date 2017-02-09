@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="jp" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <title>MyLINE管理</title>
@@ -20,19 +20,26 @@
 	<reply></reply>
 	<message></message>
 	<div id="loadingToast" style="display:none;">
-        <div class="weui-mask_transparent"></div>
-        <div class="weui-toast">
-            <i class="weui-loading weui-icon_toast"></i>
-            <p class="weui-toast__content">お待ちください</p>
-        </div>
-    </div>
-	<div id="doneToast" style="display: none;">
-        <div class="weui-mask_transparent"></div>
-        <div class="weui-toast">
-            <i class="weui-icon-success-no-circle weui-icon_toast"></i>
-            <p class="weui-toast__content">完了</p>
-        </div>
-    </div>
+	<div class="weui-mask_transparent"></div>
+	<div class="weui-toast">
+		<i class="weui-loading weui-icon_toast"></i>
+		<p class="weui-toast__content">お待ちください。</p>
+	</div>
+	</div>
+	<div id="doneToast" style="display:none;">
+		<div class="weui-mask_transparent"></div>
+		<div class="weui-toast">
+			<i class="weui-icon-success-no-circle weui-icon_toast"></i>
+			<p class="weui-toast__content">完了</p>
+		</div>
+	</div>
+	<div id="errorToast" style="display:none;">
+		<div class="weui-mask_transparent"></div>
+		<div class="weui-toast">
+			<i class="weui-icon-warn weui-icon_toast"></i>
+			<p class="weui-toast__content">エラー</p>
+		</div>
+	</div>
 	<script src="admin.html?v=3" type="riot/tag"></script>
 	<script src="user.html?v=3" type="riot/tag"></script>
 	<script src="reply.html?v=5" type="riot/tag"></script>
@@ -45,7 +52,7 @@
 	<script>
 	riot.mount('admin', {"name":"admin","role":"admin","userCount":2,"messageCount":60,"replyCount":8,"users":null,"messages":null,"replyMessages":null})
 	</script>
-	 <div class="weui-msg__extra-area">
+		 <div class="weui-msg__extra-area">
             <div class="weui-footer">
                 <p class="weui-footer__links">
                     <a href="javascript:returnHome();" class="weui-footer__link">MyLINE管理</a>

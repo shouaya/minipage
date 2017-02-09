@@ -106,10 +106,12 @@ edit(e){
 		<div class="weui-uploader">
 			<div class="weui-uploader__bd">
 				<div class="weui-uploader__input-box">
-					<input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple />
+					<input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple onchange="{upload}"/>
 				</div>
+				<output id="list"></output>
 			</div>
 		</div>
+		
 	</article>
 	<div class="weui-form-preview">
 		<div class="weui-form-preview__bd">
@@ -148,10 +150,13 @@ edit(e){
 	this.item.rule = $('#reply-base-rule').val()
 	this.opts.save(this.item);
 }
-showBig(e){
-	this.showB = true;
-	console.log(this);
-	this.update();
+upload(e){
+	var elem = document.getElementById("uploaderInput");
+	fileUpload(elem, function(data, status){
+		self.data.previewImageUrl = data[0].url;
+		self.data.originalContentUrl = data[0].url;
+		self.update();
+	});
 }
 </script>
 </reply-image>
@@ -225,7 +230,7 @@ toJson()
 		<input id="reply-base-rule" class="weui-input" type="text" value="{opts.data.rule}"/>
 	</div>
 	<div class="ui left pointing label">
-	  条件
+	  条件式
 	</div>
 </div>
 <hr/>
