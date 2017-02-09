@@ -92,3 +92,17 @@ post '/line/reply' do
 	p resp.body
   end
 end
+
+post '/file/upload' do
+  content_type :json
+  uri = URI('http://localhost:9000/file/upload')
+  req = Net::HTTP::Post.new(uri)
+  #req.basic_auth 'matt', 'secret'
+  req.basic_auth 'admin', 'admin'
+  req["content-type"] = request.content_type
+  req.body = request.body.read
+  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    resp = http.request(req)
+	p resp.body
+  end
+end
