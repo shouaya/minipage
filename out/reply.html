@@ -43,8 +43,8 @@ save(item)
   <i if={this.opts.data.type=='imagemap'} class="map icon"></i>
   <i if={this.opts.data.type=='template'} class="newspaper icon"></i>
   {this.opts.data.level}
-  <a class="detail">{this.opts.data.rule}</a>
 </div>
+{this.displayRule}
 <div class="weui-panel__ft" onclick="{edit}">
 	<a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
 		<div class="weui-cell__bd">変更</div>
@@ -54,9 +54,7 @@ save(item)
 <script>
 this.on('mount', function(){
     var date = new Date(this.opts.data.postTime);
-	if(this.opts.data.message){
-		this.displayMessage = this.opts.data.message.substring(0,20);
-	}
+	this.displayRule = this.opts.data.rule.substring(0,30);
 	this.update();
 });
 edit(e)

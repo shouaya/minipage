@@ -8,7 +8,9 @@
 		cssEl.innerHTML = 'html{font-size:' + pxPerRem + 'px!important;}';
 	}
 	setPxPerRem();
-	window.onresize = setPxPerRem;
+	$(window).resize(function() {
+		setPxPerRem();
+	});
 	$.extend($.fn,
 	{
 		fadeIn: function(ms)
@@ -141,4 +143,7 @@ function fileUpload(elem, callback){
 		output.push('<i class="checkmark icon"></i><p><strong>', escape(file.name), '</strong><br/> (', file.type || 'n/a', ') <br/> ', file.size, ' bytes', '<p>');
 	}
     document.getElementById('list').innerHTML =  output.join('') ;
+}
+function getconfig(){
+	return {gkey:"AIzaSyAcMF_qkLYqc7TSteIhae8sQtvFikFY28w"};
 }
