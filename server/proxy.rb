@@ -30,7 +30,7 @@ get '/profile/:id' do |id|
   content_type :json
   uri = URI('http://localhost:9000/profile/' + id)
   req = Net::HTTP::Get.new(uri)
-  req.basic_auth 'admin', 'admin'
+  req["Cookie"] = 'uid=test; token=test'
   req["Content-Type"] = 'application/json'
   req.body = request.body.read
   res = Net::HTTP.start(uri.hostname, uri.port) do |http|
@@ -43,7 +43,7 @@ get '/line/user' do
   content_type :json
   uri = URI('http://localhost:9000/line/user?' + request.query_string)
   req = Net::HTTP::Get.new(uri)
-  req.basic_auth 'admin', 'admin'
+  req["Cookie"] = 'uid=test; token=test'
   req["Content-Type"] = 'application/json'
   req.body = request.body.read
   res = Net::HTTP.start(uri.hostname, uri.port) do |http|
@@ -57,7 +57,7 @@ get '/line/message' do
   content_type :json
   uri = URI('http://localhost:9000/line/message?' + request.query_string)
   req = Net::HTTP::Get.new(uri)
-  req.basic_auth 'admin', 'admin'
+  req["Cookie"] = 'uid=test; token=test'
   req["Content-Type"] = 'application/json'
   req.body = request.body.read
   res = Net::HTTP.start(uri.hostname, uri.port) do |http|
@@ -70,7 +70,7 @@ get '/line/reply' do
   content_type :json
   uri = URI('http://localhost:9000/line/reply?' + request.query_string)
   req = Net::HTTP::Get.new(uri)
-  req.basic_auth 'admin', 'admin'
+  req["Cookie"] = 'uid=test; token=test'
   req["Content-Type"] = 'application/json'
   req.body = request.body.read
   res = Net::HTTP.start(uri.hostname, uri.port) do |http|
@@ -83,9 +83,8 @@ post '/line/reply' do
   content_type :json
   uri = URI('http://localhost:9000/line/reply')
   req = Net::HTTP::Post.new(uri)
-  #req.basic_auth 'matt', 'secret'
+  req["Cookie"] = 'uid=test; token=test'
   req["Content-Type"] = 'application/json'
-  req.basic_auth 'admin', 'admin'
   req.body = request.body.read
   res = Net::HTTP.start(uri.hostname, uri.port) do |http|
     resp = http.request(req)
@@ -97,8 +96,7 @@ post '/file/upload' do
   content_type :json
   uri = URI('http://localhost:9000/file/upload')
   req = Net::HTTP::Post.new(uri)
-  #req.basic_auth 'matt', 'secret'
-  req.basic_auth 'admin', 'admin'
+  req["Cookie"] = 'uid=test; token=test'
   req["content-type"] = request.content_type
   req.body = request.body.read
   res = Net::HTTP.start(uri.hostname, uri.port) do |http|

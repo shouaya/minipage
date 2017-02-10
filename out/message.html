@@ -19,7 +19,19 @@ refresh(e){
 </message>
 
 <message-info>
-{this.postTime}-{this.opts.data.type}
+<div class="ui label" onclick="{edit}">
+  <i if={this.opts.data.type=='text'} class="content icon"></i>
+  <i if={this.opts.data.type=='image'} class="image icon"></i>
+  <i if={this.opts.data.type=='video'} class="file video outline icon"></i>
+  <i if={this.opts.data.type=='audio'} class="file audio outline icon"></i>
+  <i if={this.opts.data.type=='location'} class="marker icon"></i>
+  <i if={this.opts.data.type=='sticker'} class="smile icon"></i>
+  <i if={this.opts.data.type=='follow'} class="unhide icon"></i>
+  <i if={this.opts.data.type=='unfollow'} class="hide icon"></i>
+  <i if={this.opts.data.type=='unknown'} class="help outline@icon"></i>
+  <i if={this.opts.data.type=='postback'} class="send outline icon"></i>
+</div>
+{this.postTime}
 <br/>{this.text}
 <hr/>
 <script>
