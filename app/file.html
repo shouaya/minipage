@@ -1,51 +1,102 @@
-<user>
-<pagination total={opts.userCount} size=5  ></pagination>
-<div class="R C R3 C1"></div><div class="I R3 C1 S1R3C1 F11"><user-info each={ opts.users } data={this} ></user-info></div>
-
+<file>
+<div show={!this.showDetail}  class="weui-panel">
+	<div class="weui-panel__hd">公式号に<b>音声</b>、<b>画像</b>、<b>動画</b>、<b>ロケーション</b>を発送する時に<br/>その情報を自動保存されます</div>
+	<div class="weui-panel__bd">
+		<div class="weui-media-box weui-media-box_small-appmsg">
+			<div class="weui-cells">
+				<a each={ ftype in opts.files } class="weui-cell weui-cell_access" href="javascript:;" onclick={showType}>
+					<div class="weui-cell__hd">
+						<i if={ftype.type=='image'} class="image icon"></i>
+						<i if={ftype.type=='audio'} class="file audio outline icon"></i>
+						<i if={ftype.type=='location'} class="marker icon"></i>
+						<i if={ftype.type=='video'} class="file video outline icon"></i>
+					</div>
+					<div class="weui-cell__bd weui-cell_primary">
+						<p if={ftype.type=='image'}>画像</p>
+						<p if={ftype.type=='video'}>動画</p>
+						<p if={ftype.type=='audio'}>音声</p>
+						<p if={ftype.type=='location'}>ロケーション</p>
+					</div>
+					<span class="weui-cell__ft"><span class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;">{ftype.count}</span></span>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div show={!this.showDetail} class="weui-msg__opr-area">
+	<p class="weui-btn-area">
+		<a href="javascript:returnHome()" class="weui-btn weui-btn_primary">TOPへ</a>
+	</p>
+</div>
+<div show={this.showDetail} class="R4" id="type-info"></div>
 <script>
 var self = this;
+this.showDetail=false;
 this.page = 1;
 this.on('mount', function(){
     this.refresh();
 });
 refresh(e){
-	var url = '/line/user?limit=5&offset=' + (this.page-1)*5;
+	var url = '/line/file';
 	ajaxget(url, function(data, status){
-		opts.users = data;
+		opts.files = data;
 		self.update();
 	});
 }
-</script>
-</user>
-
-<user-info>
-<div class="weui-panel__bd" onclick="{edit}">
-	<a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
-		<div class="weui-media-box__hd">
-			<img class="weui-media-box__thumb" src="{this.opts.data.pictureUrl}" alt="">
-		</div>
-		{this.opts.data.displayName}|{this.opts.data.statusMessage}
-	</a>
-</div>
-<user-detail show={this.showDetail}　data={this.opts.data}>
-</user-detail>
-<script>
-this.showDetail=false;
-edit(e)
-{
-	this.showDetail=true;
-	this.update();
+showType(e){
+	this.showDetail = !this.showDetail;
+	var url = '/line/file/'+ e.item.ftype.type + '?limit=5&offset=' + (this.page-1)*5;
+	ajaxget(url, function(data, status){
+		data.showInfo = self.showInfo;
+		riot.mount("#type-info", "type-info", data);
+		self.update();
+	});
+}
+showInfo(e){
+	self.showDetail = !self.showDetail;
+	self.update();
 }
 </script>
-</user-info>
-
-<user-detail>
-<!-- some user profile tpl -->
+</file>
+<type-info>
+<pagination total={opts.count} size=5 return={opts.showInfo} ></pagination>
+<article class="R4 weui-article">
+	<section class="R4">
+		<section each={ file in opts.files }>
+			<div if={file.type=='image'} >
+				<h3></h3>
+				<br/>
+				<p><img src="{file.url}" alt=""></p>
+				<p>{file.postTime}</p>
+				<hr/>
+			</div>
+			<div if={file.type=='audio'} >
+				<h3></h3>
+				<br/>
+				<p><audio src="{file.url}" controls>
+				</audio></p>
+				<p>{file.postTime}</p>
+				<hr/>
+			</div>
+			<div if={file.type=='location'} >
+				<h3></h3>
+				<br/>
+				<p><img src="https://maps.googleapis.com/maps/api/staticmap?center={file.latitude},{file.longitude}&markers=color:red%7Clabel:G%7C{file.latitude},{file.longitude}&zoom=12&size=400x300&key=AIzaSyAcMF_qkLYqc7TSteIhae8sQtvFikFY28w"/></p>
+				<p>{file.postTime}-{file.title}</p>
+				<hr/>
+			</div>
+			<div if={file.type=='video'} >
+				<h3></h3>
+				<br/>
+				<p><video src="{file.url}" controls ></video></p>
+				<p>{file.postTime}</p>
+				<hr/>
+			</div>
+		</section>
+	</section>
+</article>
 <script>
-colse(e)
-{
-	this.parent.showDetail = false;
-	this.parent.update();
-}
+var self = this;
+this.page = 1;
 </script>
-</user-detail>
+</type-info>

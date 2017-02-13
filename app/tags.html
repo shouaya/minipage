@@ -6,8 +6,11 @@
                 <div if={ this.parent.page > 1 } class="weui-navbar__item" onclick={last}>
                     <<<<<
                 </div>
-                <div class="weui-navbar__item" onclick="javascript:returnHome()">
+                <div if={ !opts.return }  class="weui-navbar__item" onclick="javascript:returnHome()">
                     TOPへ （{this.parent.page}）
+                </div>
+				<div if={ opts.return }  class="weui-navbar__item" onclick="{opts.return}">
+                    戻る （{this.parent.page}）
                 </div>
                 <div if={ this.parent.page*opts.size < opts.total } class="weui-navbar__item" onclick={next}>
                     >>>>>

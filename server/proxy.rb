@@ -105,7 +105,20 @@ end
 
 get '/line/file' do
   content_type :json
-  uri = URI('http://localhost:9000/line/file' + request.query_string)
+  uri = URI('http://localhost:9000/line/file?' + request.query_string)
+  req = Net::HTTP::Get.new(uri)
+  req["Cookie"] = 'uid=test; token=test'
+  req["Content-Type"] = 'application/json'
+  req.body = request.body.read
+  res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    resp = http.request(req)
+	p resp.body
+  end
+end
+
+get '/line/file/:type' do |type|
+  content_type :json
+  uri = URI('http://localhost:9000/line/file/' + type + '?' + request.query_string)
   req = Net::HTTP::Get.new(uri)
   req["Cookie"] = 'uid=test; token=test'
   req["Content-Type"] = 'application/json'
