@@ -102,14 +102,14 @@ edit(e){
 }
 </script>
 </reply-text>
+
 <reply-image>
-<div class="page__bd">
+<div show={!this.showDetail} class="page__bd">
 	<article class="weui-article">
 		<img src="{this.data.previewImageUrl}">
 		<div class="weui-uploader">
 			<div class="weui-uploader__bd">
-				<div class="weui-uploader__input-box">
-					<input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple onchange="{upload}"/>
+				<div class="weui-uploader__input-box" onclick="{upload}">
 				</div>
 				<output id="list"></output>
 			</div>
@@ -128,11 +128,13 @@ edit(e){
 		</div>
 	</div>
 </div>
+<div show={this.showDetail} id="type-info"></div>
 <script>
 var self = this;
 this.item = {};
 this.dataArr = [];
 this.data = {};
+this.showDetail=false;
 this.on('mount', function(){
 	this.item.id = opts.data.id;
 	this.item.message = opts.data.message;
@@ -153,23 +155,30 @@ edit(e){
 	this.opts.save(this.item);
 }
 upload(e){
-	var elem = document.getElementById("uploaderInput");
-	fileUpload(elem, function(data, status){
-		self.data.previewImageUrl = data[0].url;
-		self.data.originalContentUrl = data[0].url;
-		self.update();
-	});
+	this.showDetail=true;
+	riot.mount("#type-info", "type-info", {type:'image', showInfo:self.showInfo, add:self.add});
+	this.update();
+}
+showInfo(e){
+	self.showDetail = !self.showDetail;
+	self.update();
+}
+add(e){
+	self.data.previewImageUrl = e.item.file.url;
+	self.data.originalContentUrl = e.item.file.url;
+	self.showDetail = !self.showDetail;
+	self.update();
 }
 </script>
 </reply-image>
+
 <reply-video>
-<div class="page__bd">
+<div show={!this.showDetail} class="page__bd">
 	<article class="weui-article">
-		<video src="{this.data.originalContentUrl}" poster="{this.data.previewImageUrl}" controls ></video>
+		<video src="{this.data.originalContentUrl}" controls ></video>
 		<div class="weui-uploader">
 			<div class="weui-uploader__bd">
-				<div class="weui-uploader__input-box">
-					<input id="uploaderInput" class="weui-uploader__input" type="file" accept="video/*" multiple onchange="{upload}"/>
+				<div class="weui-uploader__input-box" onclick="{upload}">
 				</div>
 				<output id="list"></output>
 			</div>
@@ -187,8 +196,10 @@ upload(e){
 		</div>
 	</div>
 </div>
+<div show={this.showDetail} id="type-info"></div>
 <script>
 var self = this;
+this.showDetail=false;
 this.item = {};
 this.dataArr = [];
 this.data = {};
@@ -212,25 +223,31 @@ edit(e){
 	this.opts.save(this.item);
 }
 upload(e){
-	var elem = document.getElementById("uploaderInput");
-	fileUpload(elem, function(data, status){
-		self.data.originalContentUrl = data[0].url;
-		self.update();
-	});
+	this.showDetail=true;
+	riot.mount("#type-info", "type-info", {type:'video', showInfo:self.showInfo, add:self.add});
+	this.update();
+}
+showInfo(e){
+	self.showDetail = !self.showDetail;
+	self.update();
+}
+add(e){
+	self.data.originalContentUrl = e.item.file.url;
+	self.showDetail = !self.showDetail;
+	self.update();
 }
 </script>
 </reply-video>
 
 <reply-audio>
-<div class="page__bd">
+<div show={!this.showDetail} class="page__bd">
 	<article class="weui-article">
 		<audio src="{this.data.originalContentUrl}" controls>
 			<p>音声を再生するには、audioタグをサポートしたブラウザが必要です。</p>
 		</audio>
 		<div class="weui-uploader">
 			<div class="weui-uploader__bd">
-				<div class="weui-uploader__input-box">
-					<input id="uploaderInput" class="weui-uploader__input" type="file" accept="audio/*" multiple onchange="{upload}"/>
+				<div class="weui-uploader__input-box" onclick="{upload}">
 				</div>
 				<output id="list"></output>
 			</div>
@@ -248,11 +265,13 @@ upload(e){
 		</div>
 	</div>
 </div>
+<div show={this.showDetail} id="type-info"></div>
 <script>
 var self = this;
 this.item = {};
 this.dataArr = [];
 this.data = {};
+this.showDetail=false;
 this.on('mount', function(){
 	this.item.id = opts.data.id;
 	this.item.message = opts.data.message;
@@ -273,23 +292,29 @@ edit(e){
 	this.opts.save(this.item);
 }
 upload(e){
-	var elem = document.getElementById("uploaderInput");
-	fileUpload(elem, function(data, status){
-		self.data.originalContentUrl = data[0].url;
-		self.update();
-	});
+	this.showDetail=true;
+	riot.mount("#type-info", "type-info", {type:'audio', showInfo:self.showInfo, add:self.add});
+	this.update();
+}
+showInfo(e){
+	self.showDetail = !self.showDetail;
+	self.update();
+}
+add(e){
+	self.data.originalContentUrl = e.item.file.url;
+	self.showDetail = !self.showDetail;
+	self.update();
 }
 </script>
 </reply-audio>
 
 <reply-location>
-<div class="page__bd">
+<div show={!this.showDetail} class="page__bd">
 	<article class="weui-article">
 		<img src="{this.mapurl}">
 		<div class="weui-uploader">
 			<div class="weui-uploader__bd">
-				<div class="weui-uploader__input-box">
-					<input id="uploaderInput" class="weui-uploader__input" type="file" accept="image/*" multiple onchange="{upload}"/>
+				<div class="weui-uploader__input-box" onclick="{upload}">
 				</div>
 				<output id="list"></output>
 			</div>
@@ -308,11 +333,13 @@ upload(e){
 		</div>
 	</div>
 </div>
+<div show={this.showDetail} id="type-info"></div>
 <script>
 var self = this;
 this.item = {};
 this.dataArr = [];
 this.data = {};
+this.showDetail=false;
 this.configdata = getconfig();
 this.on('mount', function(){
 	this.item.id = opts.data.id;
@@ -339,12 +366,25 @@ edit(e){
 	this.opts.save(this.item);
 }
 upload(e){
-	var elem = document.getElementById("uploaderInput");
-	fileUpload(elem, function(data, status){
-		self.data.previewImageUrl = data[0].url;
-		self.data.originalContentUrl = data[0].url;
-		self.update();
-	});
+	this.showDetail=true;
+	riot.mount("#type-info", "type-info", {type:'location', showInfo:self.showInfo, add:self.add});
+	this.update();
+}
+showInfo(e){
+	self.showDetail = !self.showDetail;
+	self.update();
+}
+add(e){
+	self.data.title = e.item.file.title;
+	self.data.latitude = e.item.file.latitude;
+	self.data.longitude = e.item.file.longitude;
+	self.showDetail = !self.showDetail;
+	self.mapurl = "https://maps.googleapis.com/maps/api/staticmap?center=";
+    self.mapurl += self.data.latitude + "," + self.data.longitude;
+	self.mapurl += "&markers=color:red%7Clabel:G%7C";
+	self.mapurl += self.data.latitude + "," + self.data.longitude;
+	self.mapurl += "&zoom=12&size=400x300&key=" + self.configdata.gkey;
+	self.update();
 }
 </script>
 </reply-location>

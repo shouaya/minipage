@@ -28,11 +28,10 @@
 		<a href="javascript:returnHome()" class="weui-btn weui-btn_primary">TOPへ</a>
 	</p>
 </div>
-<div show={this.showDetail} class="R4" id="type-info"></div>
+<div show={this.showDetail} id="type-info"></div>
 <script>
 var self = this;
 this.showDetail=false;
-this.page = 1;
 this.on('mount', function(){
     this.refresh();
 });
@@ -44,13 +43,9 @@ refresh(e){
 	});
 }
 showType(e){
-	this.showDetail = !this.showDetail;
-	var url = '/line/file/'+ e.item.ftype.type + '?limit=5&offset=' + (this.page-1)*5;
-	ajaxget(url, function(data, status){
-		data.showInfo = self.showInfo;
-		riot.mount("#type-info", "type-info", data);
-		self.update();
-	});
+	self.showDetail = !self.showDetail;
+	riot.mount("#type-info", "type-info", {type:e.item.ftype.type, showInfo:self.showInfo});
+	self.update();
 }
 showInfo(e){
 	self.showDetail = !self.showDetail;
@@ -59,16 +54,18 @@ showInfo(e){
 </script>
 </file>
 <type-info>
-<pagination total={opts.count} size=5 return={opts.showInfo} ></pagination>
+<pagination total={fileInfo.count} size=5 return={opts.showInfo} ></pagination>
 <article class="R4 weui-article">
 	<section class="R4">
-		<section each={ file in opts.files }>
+		<section each={ file in fileInfo.files }>
 			<div if={file.type=='image'} >
 				<h3></h3>
 				<br/>
 				<p><img src="{file.url}" alt=""></p>
 				<p>{file.postTime}</p>
-				<hr/>
+				<p if={parent.opts.add} class="weui-btn-area" onclick={parent.opts.add}>
+					<a href="javascript:;" class="weui-btn weui-btn_primary">追加</a>
+				</p>
 			</div>
 			<div if={file.type=='audio'} >
 				<h3></h3>
@@ -76,21 +73,27 @@ showInfo(e){
 				<p><audio src="{file.url}" controls>
 				</audio></p>
 				<p>{file.postTime}</p>
-				<hr/>
+				<p if={parent.opts.add} class="weui-btn-area" onclick={parent.opts.add}>
+					<a href="javascript:;" class="weui-btn weui-btn_primary">追加</a>
+				</p>
 			</div>
 			<div if={file.type=='location'} >
 				<h3></h3>
 				<br/>
 				<p><img src="https://maps.googleapis.com/maps/api/staticmap?center={file.latitude},{file.longitude}&markers=color:red%7Clabel:G%7C{file.latitude},{file.longitude}&zoom=12&size=400x300&key=AIzaSyAcMF_qkLYqc7TSteIhae8sQtvFikFY28w"/></p>
 				<p>{file.postTime}-{file.title}</p>
-				<hr/>
+				<p if={parent.opts.add} class="weui-btn-area" onclick={parent.opts.add}>
+					<a href="javascript:;" class="weui-btn weui-btn_primary">追加</a>
+				</p>
 			</div>
 			<div if={file.type=='video'} >
 				<h3></h3>
 				<br/>
 				<p><video src="{file.url}" controls ></video></p>
 				<p>{file.postTime}</p>
-				<hr/>
+				<p if={parent.opts.add} class="weui-btn-area" onclick={parent.opts.add}>
+					<a href="javascript:;" class="weui-btn weui-btn_primary">追加</a>
+				</p>
 			</div>
 		</section>
 	</section>
@@ -98,5 +101,17 @@ showInfo(e){
 <script>
 var self = this;
 this.page = 1;
+this.fileInfo = {};
+this.on('mount', function(){
+    this.refresh();
+});
+refresh(e){
+	var url = '/line/file/'+ opts.type + '?limit=5&offset=' + (this.page-1)*5;
+	ajaxget(url, function(data, status){
+		self.fileInfo = data;
+		self.update();
+	});
+}
+
 </script>
 </type-info>
