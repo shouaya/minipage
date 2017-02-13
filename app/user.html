@@ -1,0 +1,51 @@
+<user>
+<pagination total={opts.userCount} size=5  ></pagination>
+<div class="R C R3 C1"></div><div class="I R3 C1 S1R3C1 F11"><user-info each={ opts.users } data={this} ></user-info></div>
+
+<script>
+var self = this;
+this.page = 1;
+this.on('mount', function(){
+    this.refresh();
+});
+refresh(e){
+	var url = '/line/user?limit=5&offset=' + (this.page-1)*5;
+	ajaxget(url, function(data, status){
+		opts.users = data;
+		self.update();
+	});
+}
+</script>
+</user>
+
+<user-info>
+<div class="weui-panel__bd" onclick="{edit}">
+	<a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
+		<div class="weui-media-box__hd">
+			<img class="weui-media-box__thumb" src="{this.opts.data.pictureUrl}" alt="">
+		</div>
+		{this.opts.data.displayName}|{this.opts.data.statusMessage}
+	</a>
+</div>
+<user-detail show={this.showDetail}　data={this.opts.data}>
+</user-detail>
+<script>
+this.showDetail=false;
+edit(e)
+{
+	this.showDetail=true;
+	this.update();
+}
+</script>
+</user-info>
+
+<user-detail>
+<!-- some user profile tpl -->
+<script>
+colse(e)
+{
+	this.parent.showDetail = false;
+	this.parent.update();
+}
+</script>
+</user-detail>

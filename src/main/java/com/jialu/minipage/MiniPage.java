@@ -115,7 +115,7 @@ public class MiniPage {
 		StringBuilder sb = new StringBuilder();
 		String cssContent = createCssContent(sheet, needAddCss);
 		sb.append(cssContent).append("\r\n");
-		String outPath = template.getParentFile().getAbsolutePath() + "/../out";
+		String outPath = template.getParentFile().getAbsolutePath() + "/../app";
 		try (StringReader reader = new StringReader(sb.toString());
 				FileWriter fw = new FileWriter(String.format(outPath + "/app.css", sheet.getSheetName()));) {
 			CssCompressor cssc = new CssCompressor(reader);
@@ -170,7 +170,7 @@ public class MiniPage {
 	 */
 	private static MiniBody createHtmlFile(File template, XSSFSheet sheet) throws IOException {
 		MiniBody body = createBodyContent(template, sheet);
-		String outPath = template.getParentFile().getAbsolutePath() + "/../out";
+		String outPath = template.getParentFile().getAbsolutePath() + "/../app";
 		File file = new File(String.format(outPath + "/%s.html", sheet.getSheetName()));
 		FileUtils.writeStringToFile(file, body.getHtml(), Charset.forName(CharEncoding.UTF_8));
 		return body;
