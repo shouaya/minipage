@@ -9,17 +9,15 @@ how to package:
 how to run:
 > create execute.bat
 
-> > rd /s /q "out"
+    rd /s /q "out"
+    del "log.txt"
+    mkdir "out"
+    java -jar template.xlsx chromedriver.exe "Apple iPhone 6" >> log.txt
 
-> > del "log.txt"
-
-> > mkdir "out"
-
-> > java -jar template.xlsx chromedriver.exe "Apple iPhone 6" >> log.txt
-
-run execute.bat
+> run execute.bat
 
 backlog:
-> 1, 统一使用Line的文件upload，添加使用示例图片
-> 2, 添加文件选择模块，点击加号进入文件选择模块选择上传的素材
-> 3, 
+
+    1, 统一使用Line的文件upload，添加使用示例图片
+    2, 添加文件选择模块，点击加号进入文件选择模块选择上传的素材
+    3, 
